@@ -1,0 +1,9 @@
+{"GuruApi": {
+    "token": "SEU_TOKEN",
+    "url": {
+        "transactions": "https://digitalmanager.guru/api/v2/transactions/",
+        "contacts": "https://digitalmanager.guru/api/v2/contacts/",
+        "products": "https://digitalmanager.guru/api/v2/products/"
+        }
+    }
+}

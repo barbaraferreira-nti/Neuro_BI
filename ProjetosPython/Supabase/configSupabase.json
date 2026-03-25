@@ -1,0 +1,18 @@
+{
+"Meta_DB": {
+    "url": "URL",
+    "key": "KEY"
+    },
+"Guru_DB": {
+    "url": "URL",
+    "key": "KEY"
+    },
+"Octadesk_DB": {
+    "url": "URL",
+    "key": "KEY"
+    },
+"Lancamentos_DB": {
+    "url": "URL",
+    "key": "KEY"
+    }
+}

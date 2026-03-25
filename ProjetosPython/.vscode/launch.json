@@ -1,0 +1,40 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python Debugger: Current File",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "Debug Pipelines.atualizaDadosMeta",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "Pipelines.atualizaDadosMeta",
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "Debug Pipelines.atualizaFactGuru",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "Pipelines.atualizaFactGuru",
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "Debug Pipelines.atualizaDimGuru",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "Pipelines.atualizaDimGuru",
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "Debug Pipelines.atualizaLancTabelas",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "Pipelines.Lancamentos.atualizaTabelas",
+            "console": "integratedTerminal"
+        }
+    ]
+}
