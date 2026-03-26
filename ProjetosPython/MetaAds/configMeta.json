@@ -1,0 +1,9 @@
+{
+    "Time_NTI": {
+        "token": "SEU_TOKEN",
+        "apiEndPoints": {
+            "facebook": "https://graph.facebook.com/v23.0/",
+            "instagram": "https://graph.instagram.com/v23.0/"
+        }
+    }
+}
