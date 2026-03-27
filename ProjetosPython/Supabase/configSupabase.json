@@ -1,0 +1,10 @@
+{
+"Guru_DB": {
+    "url": "SEU_HOST",
+    "key": "SEU_TOKEN"
+    },
+"Octadesk_DB": {
+    "url": "SEU_HOST",
+    "key": "SEU_TOKEN"
+    }
+}

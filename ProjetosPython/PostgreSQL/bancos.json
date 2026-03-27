@@ -1,0 +1,16 @@
+{
+"Guru_DB":{
+    "host": "HOST",
+    "port": "5432",
+    "database": "postgres",
+    "user": "SEU_USER",
+    "password": "SUA_PASSWORD"
+    },
+"Octadesk_DB":{
+    "host": "HOST",
+    "port": "5432",
+    "database": "postgres",
+    "user": "SEU_USER",
+    "password": "SUA_PASSWORD"
+    }
+}
