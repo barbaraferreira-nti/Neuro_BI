@@ -8,6 +8,7 @@ ProjetosPython/ActiveCampaign/configActive.json
 ProjetosPython/Guru/configGuru.json
 ProjetosPython/MetaAds/configMeta.json
 ProjetosPython/Manychat/configManychat.json
+ProjetosPython/Principia/configPrincipia.json
 
 # C extensions
 *.so

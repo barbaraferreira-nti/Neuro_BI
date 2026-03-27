@@ -1,18 +1,10 @@
 {
-"Meta_DB": {
-    "url": "URL",
-    "key": "KEY"
-    },
 "Guru_DB": {
-    "url": "URL",
-    "key": "KEY"
+    "url": "SEU_HOST",
+    "key": "SEU_TOKEN"
     },
 "Octadesk_DB": {
-    "url": "URL",
-    "key": "KEY"
-    },
-"Lancamentos_DB": {
-    "url": "URL",
-    "key": "KEY"
+    "url": "SEU_HOST",
+    "key": "SEU_TOKEN"
     }
 }

@@ -1,9 +1,5 @@
 {"ApiActive":{
     "url": "https://neurosaber46413.api-us1.com/api/3/",
-    "endpoint": "",
-    "headers": {
-        "accept": "application/json",
-        "token": "SEU_TOKEN"
-        }
+    "token": "SEU_TOKEN"
     }
 }

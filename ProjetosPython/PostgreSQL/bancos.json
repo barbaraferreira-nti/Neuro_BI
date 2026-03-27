@@ -1,17 +1,4 @@
-{"Meta_DB":{
-    "host": "HOST",
-    "port": "5432",
-    "database": "postgres",
-    "user": "SEU_USER",
-    "password": "SUA_PASSWORD"
-    },
-"SendFlow_DB":{
-    "host": "HOST",
-    "port": "5432",
-    "database": "postgres",
-    "user": "SEU_USER",
-    "password": "SUA_PASSWORD"
-    },
+{
 "Guru_DB":{
     "host": "HOST",
     "port": "5432",
@@ -20,13 +7,6 @@
     "password": "SUA_PASSWORD"
     },
 "Octadesk_DB":{
-    "host": "HOST",
-    "port": "5432",
-    "database": "postgres",
-    "user": "SEU_USER",
-    "password": "SUA_PASSWORD"
-    },
-"Lancamentos_DB":{
     "host": "HOST",
     "port": "5432",
     "database": "postgres",

@@ -1,5 +1,5 @@
-from Guru import metodos_guru
-from Supabase import metodos_supabase
+from ProjetosPython.Guru import metodos_guru
+from ProjetosPython.Supabase import metodos_supabase
 import pandas as pd
 import datetime
 import math

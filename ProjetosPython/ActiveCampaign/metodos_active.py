@@ -18,13 +18,12 @@ class api:
 
             # Montar a URL e headers
             url_base = config_servico.get("url", "")
-            headers_config = config_servico.get("headers", {})
             url = url_base + endpoint
 
             # Montar o headers padrão
             headers = {
-                "accept": headers_config.get("accept", "application/json"),
-                "Api-Token": headers_config.get("token", "")
+                "accept": "application/json",
+                "Api-Token": config_servico.get("token", "")
             }
 
             for i in range(retries):
