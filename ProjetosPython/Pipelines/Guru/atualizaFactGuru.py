@@ -1,5 +1,5 @@
-from Supabase import metodos_supabase
-from Guru import metodos_guru
+from ProjetosPython.Supabase import metodos_supabase
+from ProjetosPython.Guru import metodos_guru
 import datetime
 import traceback
 import pandas as pd

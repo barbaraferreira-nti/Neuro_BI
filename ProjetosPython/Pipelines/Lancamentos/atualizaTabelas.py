@@ -1,5 +1,5 @@
 import os, json, datetime
-from Supabase import metodos_supabase
+from ProjetosPython.Supabase import metodos_supabase
 import psycopg2
 from psycopg2.extras import execute_values
 

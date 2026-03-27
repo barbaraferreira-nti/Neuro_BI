@@ -1,5 +1,5 @@
-from MetaAds import metodos_meta
-from Supabase import metodos_supabase
+from ProjetosPython.MetaAds import metodos_meta
+from ProjetosPython.Supabase import metodos_supabase
 import datetime
 
 dic_contas_meta = {
@@ -25,7 +25,7 @@ dataF = (datetime.date.today() - datetime.timedelta(days=1)).strftime("%Y-%m-%d"
 for nome, id in dic_contas_meta.items():
 
     dados_meta = metodos_meta.api.getDadosConta(app="Time_NTI", 
-                                                periodo=["2026-03-22", "2026-03-23"], 
+                                                periodo=["2026-03-24", "2026-03-26"], 
                                                 campos=["account_id", "account_name", "campaign_id", "campaign_name", "ad_id", "ad_name", "impressions", "reach", "clicks", "spend",
                                                         "frequency", "actions", "action_values", "video_play_actions"], 
                                                 nivel="ad", 

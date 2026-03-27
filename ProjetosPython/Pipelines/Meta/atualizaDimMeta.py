@@ -1,5 +1,5 @@
-from MetaAds import metodos_meta
-from Supabase import metodos_supabase
+from ProjetosPython.MetaAds import metodos_meta
+from ProjetosPython.Supabase import metodos_supabase
 import datetime
 
 
@@ -28,7 +28,7 @@ allCampaigns = []
 
 for nome, id in dic_contas_meta.items():
         dados_campanhas = metodos_meta.api.getDadosConta(app="Time_NTI", 
-                                                periodo=["2025-01-01","2026-03-23"], 
+                                                periodo=["2026-03-01","2026-03-27"], 
                                                 campos=["account_id", "account_name","campaign_id", "campaign_name"], 
                                                 nivel="campaign", 
                                                 contaAnuncio=id
@@ -64,43 +64,43 @@ response_campaign = (
 print(f"{len(dados_campanhas_finais)} campanhas processadas com upsert.")
 
 
-## Atualizando a tabela dim_anuncios
+# Atualizando a tabela dim_anuncios
 
-# allAds = []
+allAds = []
 
-# for nome, id in dic_contas_meta.items():
-#         dados_meta = metodos_meta.api.getDadosConta(app="Time_NTI", 
-#                                                periodo=["2026-03-15","2026-03-23"], 
-#                                                campos=["ad_id", "ad_name"], 
-#                                                nivel="ad", 
-#                                                contaAnuncio=id
-#                                                )
-#         if not dados_meta:
-#             print(f"Conta {nome} sem dados.")
-#             continue
+for nome, id in dic_contas_meta.items():
+        dados_meta = metodos_meta.api.getDadosConta(app="Time_NTI", 
+                                               periodo=["2026-03-24","2026-03-26"], 
+                                               campos=["ad_id", "ad_name"], 
+                                               nivel="ad", 
+                                               contaAnuncio=id
+                                               )
+        if not dados_meta:
+            print(f"Conta {nome} sem dados.")
+            continue
         
-#         allAds.extend(dados_meta)
+        allAds.extend(dados_meta)
 
-# ads_unicos = {}
-# for ad in allAds:
-#     ad_id = ad.get("ad_id")
+ads_unicos = {}
+for ad in allAds:
+    ad_id = ad.get("ad_id")
 
-#     if ad_id:
-#         ads_unicos[ad_id] = {
-#             "ad_id": ad_id,
-#             "ad_name": ad.get("ad_name")
-#         }
+    if ad_id:
+        ads_unicos[ad_id] = {
+            "ad_id": ad_id,
+            "ad_name": ad.get("ad_name")
+        }
 
-# dados_ads_finais = list(ads_unicos.values())
+dados_ads_finais = list(ads_unicos.values())
 
-# response_ad = (
-#     supabase
-#     .table("dim_meta_anuncios")
-#     .upsert(dados_ads_finais, on_conflict="ad_id")
-#     .execute()
-# )
+response_ad = (
+    supabase
+    .table("dim_meta_anuncios")
+    .upsert(dados_ads_finais, on_conflict="ad_id")
+    .execute()
+)
 
-# print(f"{len(dados_ads_finais)} anúncios processados com upsert.")
+print(f"{len(dados_ads_finais)} anúncios processados com upsert.")
 
 
 
