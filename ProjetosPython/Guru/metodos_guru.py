@@ -300,7 +300,6 @@ class api:
             "offer_name": offer.get("name")
         }
                        
-
     @staticmethod
     def getOffers(app, per_page=50, max_pages=600):
         scriptDir = os.path.dirname(os.path.abspath(__file__))

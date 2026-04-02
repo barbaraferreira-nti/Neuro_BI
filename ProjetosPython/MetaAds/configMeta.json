@@ -1,6 +1,9 @@
 {
     "Time_NTI": {
-        "token": "SEU_TOKEN",
+        "token":{
+            "neurosaber": "SEU_TOKEN",
+            "sinahpse": "SEU_TOKEN"
+        } ,
         "apiEndPoints": {
             "facebook": "https://graph.facebook.com/v23.0/",
             "instagram": "https://graph.instagram.com/v23.0/"
