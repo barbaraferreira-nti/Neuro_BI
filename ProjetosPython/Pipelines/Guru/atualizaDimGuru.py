@@ -5,7 +5,7 @@ import datetime
 import math
 import traceback
 
-dataI = (datetime.datetime.today() - datetime.timedelta(days=3)).strftime("%Y-%m-%d")
+dataI = (datetime.datetime.today() - datetime.timedelta(days=10)).strftime("%Y-%m-%d")
 dataF = datetime.datetime.today().strftime("%Y-%m-%d")
 banco = "Guru_DB"
 tabela_dim_product = "dim_product"
@@ -82,7 +82,7 @@ except Exception as e:
 
 # Atualizando a dimensão 'contacts' 
 try: 
-    df_contact = metodos_guru.api.getContactsDF(app="GuruApi", periodo=[dataI, dataI])
+    df_contact = metodos_guru.api.getContactsDF(app="GuruApi", periodo=[dataI,dataF])
     
     if df_contact.empty:
         print("Aviso: nenhum dado retornado no endpoint de contatos.")

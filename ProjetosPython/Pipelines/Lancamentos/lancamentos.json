@@ -10,8 +10,8 @@
     "contaMeta": "260935725436002",
     "id_produtos_captacao": ["1758288285", "1720103915", "1721826295", "1755721547"],
     "id_offer_captacao":["a103ea15-af19-44b4-b5af-efd658809367", "a103efc0-629c-40c0-993b-f9fc4e5d257f", "a103efe8-91d1-4190-88ea-cd4036ef2f3b", "a103ecb8-144a-405b-9ec2-8b9ca0d1908d","a103ec27-becd-434c-830f-5df9e0548c04"],
-    "id_produtos_lancamento": ["1721750660","1721994957", "1721750171", "1757608971"],
-    "id_offer_lancamento": ["a12cba7d-3586-4a43-8ec4-ac1a8bd3c45d", "a144f6d9-bbd5-435d-a350-d4b6f78851ad", "9f170a3f-cb6c-41e9-b9a8-b6e43449876e"]
+    "id_produtos_lancamento": ["1721750660","1721994957", "1721750171", "1757608971", "1720103009"],
+    "id_offer_lancamento": ["a12cba7d-3586-4a43-8ec4-ac1a8bd3c45d", "a144f6d9-bbd5-435d-a350-d4b6f78851ad", "9f170a3f-cb6c-41e9-b9a8-b6e43449876e", "a148f912-8555-47f2-8988-42804ef1f572"]
     },
     "PROLEIA_0426": {
     "id_lancamento": 2,
@@ -20,10 +20,12 @@
     "fim_captacao": "2026-04-10",
     "inicio_lancamento": "2026-04-11",
     "fim_lancamento": "2026-04-22",
-    "campanha_sendflow": "Oficina da NeuroAlfabetização",
+    "campanha_sendflow": "Oficina da NeuroAlfabetização (ABRIL)",
     "contaMeta": "260935725436002",
-    "id_produtos_captacao": ["1758288285","1721994957", "1721750171"],
-    "id_produtos_lancamento": ["1721750660","1755721547"]
+    "id_produtos_captacao": ["1758288285", "1720103915", "1721826295", "1755721547"],
+    "id_offer_captacao":["a103ea15-af19-44b4-b5af-efd658809367", "a103efc0-629c-40c0-993b-f9fc4e5d257f", "a103efe8-91d1-4190-88ea-cd4036ef2f3b", "a103ecb8-144a-405b-9ec2-8b9ca0d1908d","a103ec27-becd-434c-830f-5df9e0548c04"],
+    "id_produtos_lancamento": ["1721750660","1721994957", "1721750171", "1757608971", "1720103009"],
+    "id_offer_lancamento": ["a12cba7d-3586-4a43-8ec4-ac1a8bd3c45d", "a144f6d9-bbd5-435d-a350-d4b6f78851ad", "9f170a3f-cb6c-41e9-b9a8-b6e43449876e", "a148f912-8555-47f2-8988-42804ef1f572"]
     },
     "PROLEIA_0126": {
     "id_lancamento": 3,

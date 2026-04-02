@@ -9,12 +9,12 @@ import random
 
 class api:
     @staticmethod
-    def auth(app):
+    def auth(app, ambiente):
         scriptDir = os.path.dirname(os.path.abspath(__file__))
         configPath = os.path.join(scriptDir, "configMeta.json")
         with open(configPath, "r", encoding="utf-8") as f:
             config = json.load(f)
-        return config.get(app, {}).get("token")
+        return config[app]["token"][ambiente]
     
     @staticmethod
     def make_session():
@@ -88,7 +88,7 @@ class api:
         raise Exception(f"Erro persistente na URL: {url}. Última exceção: {last_exc}")
 
     @staticmethod
-    def getDadosConta(app=None, periodo=[], campos=[], nivel=None, contaAnuncio=None):
+    def getDadosConta(app=None,ambiente=None, periodo=[], campos=[], nivel=None, contaAnuncio=None):
         periodo = periodo or []
         camposList = campos or []
         if len(periodo) != 2:
@@ -100,7 +100,7 @@ class api:
             config = json.load(f)
         
         baseEndPoint = config[app]["apiEndPoints"]["facebook"]
-        token = api.auth(app=app)
+        token = config[app]["token"][ambiente]
 
         headers = {"Authorization": f"Bearer {token}"}
         url = f"{baseEndPoint}act_{contaAnuncio}/insights"
@@ -278,4 +278,3 @@ class api:
 
             return out
     
-

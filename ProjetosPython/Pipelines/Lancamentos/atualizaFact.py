@@ -7,7 +7,7 @@ from psycopg2.extras import execute_values
     ACOMPANHAMENTO DOS LANÇAMENTOS (PAGOS E GRÁTIS)
 """
 
-nomeArquivo = "PROLEIA_0126"
+nomeArquivo = "PROLEIA_0426"
 banco_supabase = "Guru_DB"
 BATCH_INSERT_SUPABASE = 500
 
