@@ -250,17 +250,13 @@ class api:
                 )
 
                 products = payload.get("data", []) or []
-                
+
                 for product in products:
                     row = api.tratarProduct(product)
-                    product_id = product.get("id")
+                    if row:
+                        all_products.append(row)
 
-                    # busca offers do produto
-                    offers = api.getProductOffers(app, product_id, session, headers)
-                    row["offer_id"] = offers["offer_id"]
-                    row["offer_name"] = offers["offer_name"]
-                    all_products.append(row)
-
+                
                 cursor = payload.get("next_cursor")
 
                 if not cursor:
@@ -392,21 +388,18 @@ class api:
         offer = product.get("offer", {}) or {}
 
         return {
-            "transaction_id": payload.get("id"),
+            "id": payload.get("id"),
             "status": payload.get("status"),
-            "contact_id": contact.get("id"),
-            
         
             # timestamptz no banco
-            "ordered_at": api.unix_to_datetime(dates.get("ordered_at")),
             "created_at": api.unix_to_datetime(dates.get("created_at")),
             "updated_at": api.unix_to_datetime(dates.get("updated_at")),
+            "ordered_at": api.unix_to_datetime(dates.get("ordered_at")),
             "confirmed_at": api.unix_to_datetime(dates.get("confirmed_at")),
             "canceled_at": api.unix_to_datetime(dates.get("canceled_at")),
 
-
-            "product_id": product.get("id"),
-            "product_internal_id": product.get("internal_id"),
+            "product_id": product.get("internal_id"),
+            "product_guru_id": product.get("id"),
             "offer_id": offer.get("id"),
             
             "payment_gross": payment.get("gross"),
@@ -422,19 +415,29 @@ class api:
             "trackings_utm_campaign": trackings.get("utm_campaign"),
             "trackings_utm_medium": trackings.get("utm_medium"),
             "trackings_utm_content": trackings.get("utm_content"),
-            "offer_name": offer.get("name"),
-
             "trackings_utm_term": trackings.get("utm_term"),
+
+            "has_order_bump": payload.get("has_order_bump"),
+            "is_order_bump": payload.get("is_order_bump"),
+
+            "product_qty": product.get("qty"),
+            "product_total_value": product.get("total_value"),
+            "payment_refuse_reason": payment.get("refuse_reason"),
+
             "contact_doc": contact.get("doc"),
             "contact_name": contact.get("name"),
             "contact_email": contact.get("email"),
             "contact_phone": api.tratar_telefone(contact.get("phone_number")),
-            "has_order_bump": payload.get("has_order_bump"),
-            "is_order_bump": payload.get("is_order_bump"),
-            "product_name": product.get("name"),
-            "product_qty": product.get("qty"),
-            "product_total_value": product.get("total_value"),
-            "payment_refuse_reason": payment.get("refuse_reason")
+            "contact_guru_id": contact.get("id"),
+            "contact_address_zipcode": contact.get("address_zip_code"),
+            "contact_address_state": contact.get("address_state"),
+            "contact_address_city": contact.get("address_city"),
+            "contact_address_district": contact.get("address_district"),
+            "contact_address_street": contact.get("address"),
+            "contact_address_number": contact.get("address_number"),
+            "contact_address_complement": contact.get("address_comp"),
+
+            "plataforma": "Guru"
 
         }
 
@@ -479,7 +482,8 @@ class api:
             # timestamptz no banco
             "created_at": api.unix_to_datetime(payload.get("created_at")),
             "updated_at": api.unix_to_datetime(payload.get("updated_at")),
-            "is_hidden": payload.get("is_hidden")
+            "is_hidden": payload.get("is_hidden"),
+            "plataforma": "Guru"
         }
     
     @staticmethod

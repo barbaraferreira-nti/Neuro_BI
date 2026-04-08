@@ -1,10 +1,10 @@
 {
 "Guru_DB": {
-    "url": "SEU_HOST",
+    "url": "https://yswgoojqqpwlfmxxuink.supabase.co",
     "key": "SEU_TOKEN"
     },
 "Octadesk_DB": {
-    "url": "SEU_HOST",
+    "url": "https://oucfnlmlzssddpifqifs.supabase.co",
     "key": "SEU_TOKEN"
     }
 }

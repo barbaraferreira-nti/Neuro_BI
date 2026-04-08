@@ -8,7 +8,7 @@ from psycopg2.extras import execute_values
     ACOMPANHAMENTO DOS LANÇAMENTOS (PAGOS E GRÁTIS)
 """
 
-nomeArquivo = "PROLEIA_0326"
+nomeArquivo = "PROLEIA_0426"
 
 
 ## TRAZENDO OS DADOS DO JSON
@@ -102,19 +102,19 @@ finally:
 try:
     cur_guru = conexao.cursor()
     query_captacao_guru = """
-        UPDATE public.fact_transactions
+        UPDATE public.fact_sales
         SET id_lancamento = %s
         WHERE ordered_at::date BETWEEN %s AND %s
-          AND product_id = ANY(%s)
+          AND product_guru_id = ANY(%s)
           AND offer_id = ANY(%s)
 
     """
 
     query_lancamento_guru = """
-        UPDATE public.fact_transactions
+        UPDATE public.fact_sales
         SET id_lancamento = %s
         WHERE ordered_at::date BETWEEN %s AND %s
-          AND product_id = ANY(%s) 
+          AND product_guru_id = ANY(%s) 
           AND offer_id = ANY(%s)
 
 

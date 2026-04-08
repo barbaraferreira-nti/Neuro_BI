@@ -194,11 +194,25 @@ class api:
     
     @staticmethod
     def unix_to_datetime(value):
-        if value in (None, "", 0):
+        if value is None:
             return None
+
+        if isinstance(value, str):
+            value = value.strip()
+            if value == "":
+                return None
+            try:
+                value = float(value)
+            except ValueError:
+                return value
+
+        if not isinstance(value, (int, float)):
+            return None
+
         if value > 1e12:
-            value = value/1000
-        return datetime.fromtimestamp(value, tz=timezone.utc)
+            value = value / 1000
+
+        return datetime.fromtimestamp(value, tz=timezone.utc).isoformat()
 
     @staticmethod
     def padronizar_nome_curso(nome):
@@ -210,6 +224,10 @@ class api:
             return "[CURSO] - CERTIFICAÇÃO PROLEIA +"
         elif "proleia" in nome_lower:
             return "[CURSO] - PROLEIA: PROGRAMA LEITURA ESCRITA INTERPRETAÇÃO E APRENDIZAGEM"
+        elif "pennsa" in nome_lower:
+            return "[CURSO] - PENNSA: PROGRAMA ESPECIALIZADO EM NEUROAPRENDIZAGEM NEUROSABER"
+        elif "promais" in nome_lower:
+            return "[CURSO] - PROMAIS: PROGRAMA DE RACIOCÍNIO E APRENDIZAGEM MATEMÁTICA"
         return nome
 
     @staticmethod
@@ -223,27 +241,28 @@ class api:
         else:
             course = {}
 
+        product_id = course.get("id")
+        valor_product = payload.get("totalValue")
+
+        regras = api.get_regras_produto(product_id, valor_product)
+
         return {
 
         "id": payload.get("id"),
         "status": payload.get("resumeStatus"),
         "created_at": payload.get("createdAt"),
         "updated_at": payload.get("updatedAt"),
-        "signed_at": payload.get("signedDate"),
-        "first_installment_paid": payload.get("firstInstallmentPaid"),
+        "ordered_at": payload.get("createdAt"),
+        "confirmed_at": payload.get("signedDate"),
+        "product_id": product_id,
+        "offer_id": regras.get("offer_id"),
+        "payment_gross": api.tratar_value2(payload.get("upfrontValue")),
+        "payment_net": api.tratar_value(payload.get("totalValue")),
+        "payment_method": "Boleto Parcelado",
         "installments_qty": payload.get("installmentsToApply"),
-        "total_value": api.tratar_value(payload.get("totalValue")),
-        "up_front_value": api.tratar_value2(payload.get("upfrontValue")),
-        "origin": payload.get("origin"),
-        "product_type": payload.get("ProductType"),
-        "product_id": course.get("id"),
-        "product_name": course.get("name"),
-        "product_value": api.tratar_value(course.get("price")),
-        "product_course_class_id": course.get("courseClassId"),
-        "product_course_class_name": course.get("courseClassName"),
-        "product_course_class_value": api.tratar_value(course.get("courseClassPrice")),
-        "contact_name": payload.get("fullName"),
+        "product_total_value": api.tratar_value(course.get("price")),
         "contact_doc": payload.get("CPF"),
+        "contact_name": payload.get("fullName"),
         "contact_email": payload.get("email"),
         "contact_phone": api.tratar_telefone(payload.get("phone")),
         "contact_address_zipcode": address.get("zipcode"),
@@ -253,26 +272,34 @@ class api:
         "contact_address_street": address.get("street"),
         "contact_address_number": address.get("number"),
         "contact_address_complement": address.get("complement"),
-        "provi_comission": payload.get("proviComission"),
-        "creator": payload.get("creator")
+        "principia_course_class_id": course.get("courseClassId"),
+        "principia_creator": payload.get("creator"),
 
+        "plataforma": "Principia"
         }
    
+    @staticmethod
+    def tratarActive(active):
+        if active is None:
+            return None
+
+        if isinstance(active, str):
+            active = active.lower() == "true"
+
+        return not active
+
     @staticmethod
     def tratarCourses(payload):
         nome = payload.get("name")
 
         return {
-
         "product_id": payload.get("id"),
-        "product_name": nome,
-        "active": payload.get("active"),
+        "name": api.padronizar_nome_curso(nome),
+        "marketplace_name": payload.get("ProductType"),
         "created_at": api.unix_to_datetime(payload.get("createdAt")),
         "updated_at": api.unix_to_datetime(payload.get("updatedAt")),
-        "product_type": payload.get("ProductType"),
-        "creator": payload.get("creator"),
-        "product_name_padrao": api.padronizar_nome_curso(nome)
-
+        "is_hidden": api.tratarActive(payload.get("active")),
+        "plataforma": "Principia"
         }
     
     @staticmethod
@@ -291,6 +318,18 @@ class api:
         
 
     @staticmethod
+    def getCoursesDF(app,ambiente=None):
+        rows = api.getCourses(
+            app=app,
+            ambiente=ambiente
+        )
+
+        rows_tratadas = [api.tratarCourses(row) for row in rows]
+
+        df = pd.DataFrame(rows_tratadas)
+        return df
+
+    @staticmethod
     def getCourseClassesDF(app, ambiente):
         rows = api.getCourseClasses(
             app=app,
@@ -300,37 +339,75 @@ class api:
         return df
     
     @staticmethod
-    def updateCourse(app, ambiente, course_id, body):
-        scriptDir = os.path.dirname(os.path.abspath(__file__))
-        configPath = os.path.join(scriptDir, "configPrincipia.json")
+    def get_regras_produto(product_id, payment_net):
+        if product_id is None or payment_net is None:
+            return {}
 
-        with open(configPath, "r", encoding="utf-8") as f:
-            config = json.load(f)
+        product_id = str(product_id)
 
-        baseEndPoint = config[app][ambiente]
-        token = config[app]["token"]
-
-        headers = {
-            "accept": "application/json",
-            "Api-Token": token,
-            "Content-Type": "application/json"
+        regras = {
+            "64591": {
+                "product_name_padrao": "[CURSO] - PROLEIA: PROGRAMA LEITURA ESCRITA INTERPRETAÇÃO E APRENDIZAGEM",
+                "offers": {
+                    149700: {
+                        "offer_id": "p0001"
+                    },
+                    129700: {
+                        "offer_id": "p0002"
+                    }
+                }
+            },
+            "53855": {
+                "product_name_padrao": "[CURSO] - PROLEIA: PROGRAMA LEITURA ESCRITA INTERPRETAÇÃO E APRENDIZAGEM",
+                "offers": {
+                    142700: {
+                        "offer_id": "p0003"
+                    }
+                }
+            },
+            "54078":{
+                "product_name_padrao": "[CURSO] - PENNSA: PROGRAMA ESPECIALIZADO EM NEUROAPRENDIZAGEM NEUROSABER",
+                "offers":{
+                    94700:{
+                        "offer_id":"p0004"
+                    }
+                }
+            },
+            "55271":{
+                "product_name_padrao": "[CURSO] - CERTIFICAÇÃO PROLEIA +",
+                "offers":{
+                    499700:{
+                        "offer_id":"p0005"
+                    }
+                }
+            },
+            "60215":{
+                "product_name_padrao": "[CURSO] - PROMAIS: PROGRAMA DE RACIOCÍNIO E APRENDIZAGEM MATEMÁTICA",
+                "offers":{
+                    99700:{
+                        "offer_id":"p0006"
+                    }
+                }
+            },
+            "65379":{
+                "product_name_padrao": "[CURSO] - PENNSA: PROGRAMA ESPECIALIZADO EM NEUROAPRENDIZAGEM NEUROSABER",
+                "offers":{
+                    99700:{
+                        "offer_id":"p0007"
+                    }
+                }
+            }
         }
 
-        url = f"{baseEndPoint}courses/{course_id}"
+        produto = regras.get(product_id, {})
 
-        
-        response = requests.request(
-            method="PUT",
-            url=url,
-            headers=headers,
-            json=body,
-            timeout=30
-        )
+        if not produto:
+            return {}
 
-        response.raise_for_status()
+        offer = produto.get("offers", {}).get(payment_net, {})
 
-        return response.json()
-
-    
-#teste = api.getCourseClassesDF(app="PrincipiaApi", ambiente="url_prod")
-#teste.to_csv(r"C:\Users\Barbara\Downloads\classes_principia.csv", index=False)
+        return {
+            "product_name_padrao": produto.get("product_name_padrao"),
+            "offer_id": offer.get("offer_id"),
+            "offer_name": offer.get("offer_name")
+        }

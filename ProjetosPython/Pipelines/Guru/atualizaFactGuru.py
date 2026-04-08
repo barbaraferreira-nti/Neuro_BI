@@ -9,7 +9,7 @@ import math
 dataI = (datetime.datetime.today() - datetime.timedelta(days=30)).strftime("%Y-%m-%d")
 dataF = datetime.datetime.today().strftime("%Y-%m-%d")
 banco = "Guru_DB"
-tabela = "fact_transactions"
+tabela = "fact_sales"
 batch_size = 1000
 
 
@@ -50,16 +50,16 @@ def normalizar_rows(rows):
 #"2025-06-01","2025-07-31"
 
 try:
-    df = metodos_guru.api.getTransactionsDF(app="GuruApi", periodo=[dataI, dataF])
+    df = metodos_guru.api.getTransactionsDF(app="GuruApi", periodo=["2025-09-01", "2025-09-30"])
 
     if df.empty:
         print("Aviso: nenhum dado retornado.")
     else:
-        if "transaction_id" not in df.columns:
-            raise ValueError("A coluna 'transaction_id' não existe no DataFrame.")
+        if "id" not in df.columns:
+            raise ValueError("A coluna 'id' não existe no DataFrame.")
         
-        if df["transaction_id"].isnull().any():
-            raise ValueError("Existem registros com transaction_id nulo.")
+        if df["id"].isnull().any():
+            raise ValueError("Existem registros com id nulo.")
         
         rows = df.to_dict(orient="records")
         rows = normalizar_rows(rows)
@@ -70,7 +70,7 @@ try:
         for i in range(0, total_rows, batch_size):
             lote = rows[i:i + batch_size]
             try:
-                upsert = metodos_supabase.api.upsert_data(banco=banco, tabela=tabela, dados=rows, chave="transaction_id")
+                upsert = metodos_supabase.api.upsert_data(banco=banco, tabela=tabela, dados=rows, chave="id")
                 print(f"Upsert concluído com sucesso. Lote {i//batch_size + 1} | Registros {i+1} até {i+len(lote)}")
             except Exception as e:
                 print(f"Erro no lote {i//batch_size + 1} | Registros {i+1} até {i+len(lote)}")

@@ -41,7 +41,7 @@ allCampaigns = []
 
 for nome, id in dic_contas_meta_neurosaber.items():
         dados_campanhas = metodos_meta.api.getDadosConta(app="Time_NTI", ambiente="neurosaber",
-                                                periodo=[dataI,dataF], 
+                                                periodo=[dataI, dataF], 
                                                 campos=["account_id", "account_name","campaign_id", "campaign_name"], 
                                                 nivel="campaign", 
                                                 contaAnuncio=id
@@ -66,16 +66,17 @@ for camp in allCampaigns:
 
 dados_campanhas_finais = list(campanhas_unicas.values())
 
+if dados_campanhas_finais:
+    response_campaign = (
+        supabase
+        .table("dim_meta_campanhas")
+        .upsert(dados_campanhas_finais, on_conflict="campaign_id")
+        .execute()
+    )
 
-response_campaign = (
-    supabase
-    .table("dim_meta_campanhas")
-    .upsert(dados_campanhas_finais, on_conflict="campaign_id")
-    .execute()
-)
-
-print(f"{len(dados_campanhas_finais)} campanhas da Neurosaber processadas com upsert.")
-
+    print(f"{len(dados_campanhas_finais)} campanhas da Neurosaber processadas com upsert.")
+else:
+    print("Nenhum anúncio válido para upsert.")
 
 # Atualizando a tabela dim_anuncios
 
@@ -105,20 +106,20 @@ for ad in allAds:
         }
 
 dados_ads_finais = list(ads_unicos.values())
+print(f"Total final de anúncios válidos: {len(dados_ads_finais)}")
 
-response_ad = (
-    supabase
-    .table("dim_meta_anuncios")
-    .upsert(dados_ads_finais, on_conflict="ad_id")
-    .execute()
-)
+if dados_ads_finais:
+    response_ad = (
+        supabase
+        .table("dim_meta_anuncios")
+        .upsert(dados_ads_finais, on_conflict="ad_id")
+        .execute()
+    )
 
-print(f"{len(dados_ads_finais)} anúncios da Neursosaber processados com upsert.")
+    print(f"{len(dados_ads_finais)} anúncios da Neursosaber processados com upsert.")
+else:
+    print("Nenhum anúncio válido para upsert.")
 
-
-
-
-        
 # Atualizando os dados da 'Sinahpse'
 
 # Atualizando tabela dim_campanhas
@@ -151,16 +152,17 @@ for camp in allCampaigns:
 
 dados_campanhas_finais = list(campanhas_unicas.values())
 
+if dados_campanhas_finais:
+    response_campaign = (
+        supabase
+        .table("dim_meta_campanhas")
+        .upsert(dados_campanhas_finais, on_conflict="campaign_id")
+        .execute()
+    )
 
-response_campaign = (
-    supabase
-    .table("dim_meta_campanhas")
-    .upsert(dados_campanhas_finais, on_conflict="campaign_id")
-    .execute()
-)
-
-print(f"{len(dados_campanhas_finais)} campanhas da Sinahpse processadas com upsert.")
-
+    print(f"{len(dados_campanhas_finais)} campanhas da Sinahpse processadas com upsert.")
+else:
+    print("Nenhum anúncio válido para upsert.")
 
 # Atualizando a tabela dim_anuncios
 
@@ -191,11 +193,14 @@ for ad in allAds:
 
 dados_ads_finais = list(ads_unicos.values())
 
-response_ad = (
-    supabase
-    .table("dim_meta_anuncios")
-    .upsert(dados_ads_finais, on_conflict="ad_id")
-    .execute()
-)
+if dados_ads_finais:
+    response_ad = (
+        supabase
+        .table("dim_meta_anuncios")
+        .upsert(dados_ads_finais, on_conflict="ad_id")
+        .execute()
+    )
 
-print(f"{len(dados_ads_finais)} anúncios da Sinahpse processados com upsert.")
+    print(f"{len(dados_ads_finais)} anúncios da Sinahpse processados com upsert.")
+else:
+    print("Nenhum anúncio válido para upsert.")

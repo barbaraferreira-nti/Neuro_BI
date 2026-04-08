@@ -9,8 +9,9 @@ dataI = (datetime.date.today() - datetime.timedelta(days=30)).strftime("%Y-%m-%d
 dataF = (datetime.date.today() - datetime.timedelta(days=1)).strftime("%Y-%m-%d")
 
 banco = "Guru_DB"
-tabela = "fact_principia"
+tabela = "fact_sales"
 batch_size = 1000
+
 
 def normalizar_json(valor):
     # 1. nulos 
@@ -55,7 +56,7 @@ def normalizar_rows(rows):
     return rows_tratadas
 
 try:
-    df = metodosPrincipia.api.getSalesDF(app="PrincipiaApi", periodo=[dataI, dataF], ambiente="url_prod")
+    df = metodosPrincipia.api.getSalesDF(app="PrincipiaApi", periodo=["2025-01-01", "2026-04-08"], ambiente="url_prod")
 
     if df.empty:
         print("Aviso: nenhum dado retornado.")
