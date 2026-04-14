@@ -50,7 +50,7 @@ def normalizar_rows(rows):
 #"2025-06-01","2025-07-31"
 
 try:
-    df = metodos_guru.api.getTransactionsDF(app="GuruApi", periodo=["2025-09-01", "2025-09-30"])
+    df = metodos_guru.api.getTransactionsDF(app="GuruApi", periodo=[dataI,dataF])
 
     if df.empty:
         print("Aviso: nenhum dado retornado.")
