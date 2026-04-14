@@ -1,5 +1,5 @@
-from ProjetosPython.MetaAds import metodos_meta
-from ProjetosPython.Supabase import metodos_supabase
+from MetaAds import metodos_meta
+from Supabase import metodos_supabase
 import datetime
 
 dic_contas_meta_sinahpse = {
@@ -27,6 +27,7 @@ dic_contas_meta_neurosaber = {
 
 dataI = (datetime.date.today() - datetime.timedelta(days=1)).strftime("%Y-%m-%d")
 dataF = (datetime.date.today() - datetime.timedelta(days=1)).strftime("%Y-%m-%d")
+
 
 # Atualizando os dados da 'NeuroSaber'
 try:

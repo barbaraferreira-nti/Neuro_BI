@@ -27,18 +27,18 @@
     "id_produtos_lancamento": ["1721750660","1721994957", "1721750171", "1757608971", "1720103009"],
     "id_offer_lancamento": ["a12cba7d-3586-4a43-8ec4-ac1a8bd3c45d", "a144f6d9-bbd5-435d-a350-d4b6f78851ad", "9f170a3f-cb6c-41e9-b9a8-b6e43449876e", "a148f912-8555-47f2-8988-42804ef1f572"]
     },
-    "PROLEIA_0126": {
+    "POS_MANEJO_0426": {
     "id_lancamento": 3,
-    "nome_lancamento": "PROLEIA_0126",
-    "inicio_captacao": "2025-12-14",
-    "fim_captacao": "2026-01-04",
-    "inicio_lancamento": "2026-01-05",
-    "fim_lancamento": "2026-01-16",
-    "campanha_sendflow": "Oficina da NeuroAlfabetização",
-    "contaMeta": "260935725436002",
-    "id_produtos_captacao": ["1758288285", "1721826295", "1720103915", "1758288954"],
-    "id_offer_captacao":["9fea5a1b-7b56-4610-a7bf-e558173f84cd", "9fe4b3f6-e870-4f43-8340-3ff887314aa3", "9fe4b34b-396b-4d1d-b39a-b0226c7df89a", "9fea5b88-053b-412a-922c-65a179547558"],
-    "id_produtos_lancamento": ["1721750660","1721994957", "1721750171", "1757608971", "1720103009"],
-    "id_offer_lancamento": ["a12cba7d-3586-4a43-8ec4-ac1a8bd3c45d", "a144f6d9-bbd5-435d-a350-d4b6f78851ad", "9f170a3f-cb6c-41e9-b9a8-b6e43449876e", "a0d21cc1-ed28-4f7a-bd4f-11ead02795e5"]
+    "nome_lancamento": "POS_MANEJO_0426",
+    "inicio_captacao": "2026-03-30",
+    "fim_captacao": "2026-04-26",
+    "inicio_lancamento": "2026-04-30",
+    "fim_lancamento": "2026-05-09",
+    "campanha_sendflow": "Pré-Especialização Manejo Comportamental | 27/04",
+    "contaMeta": "208577594523171",
+    "id_produtos_captacao": ["1774535368", "1774535424"],
+    "id_offer_captacao":["a1669ced-2626-4f34-8a7a-07991d3361dd", "a1669d57-7e83-4d62-872c-82345a1a03ab"],
+    "id_produtos_lancamento": ["1774376719"],
+    "id_offer_lancamento": []
     }
 }
