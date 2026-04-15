@@ -3,7 +3,8 @@
     "url": {
         "transactions": "https://digitalmanager.guru/api/v2/transactions/",
         "contacts": "https://digitalmanager.guru/api/v2/contacts/",
-        "products": "https://digitalmanager.guru/api/v2/products/"
+        "products": "https://digitalmanager.guru/api/v2/products/",
+        "coupons": "https://digitalmanager.guru/api/v2/coupons/"
         }
     }
 }   
