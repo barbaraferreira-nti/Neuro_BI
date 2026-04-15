@@ -386,6 +386,7 @@ class api:
             subscription = {}
 
         offer = product.get("offer", {}) or {}
+        coupon = payment.get("coupon", {}) or {}
 
         return {
             "id": payload.get("id"),
@@ -437,8 +438,10 @@ class api:
             "contact_address_number": contact.get("address_number"),
             "contact_address_complement": contact.get("address_comp"),
 
-            "plataforma": "Guru"
-
+            "plataforma": "Guru",
+            "coupon_id": coupon.get("id"),
+            "coupon_code": coupon.get("coupon_code"),
+            "coupon_value": coupon.get("final_value")
         }
 
     @staticmethod
@@ -519,6 +522,88 @@ class api:
         rows = api.getOffers(
             app=app
             )
+        df = pd.DataFrame(rows)
+        return df
+
+    @staticmethod
+    def getCoupons(app, max_pages=600):
+        scriptDir = os.path.dirname(os.path.abspath(__file__))
+        configPath = os.path.join(scriptDir, "configGuru.json")
+        
+        with open(configPath, "r", encoding="utf-8") as f:
+            config = json.load(f)
+
+        baseEndPoint = config[app]["url"]["coupons"]
+        token = api.auth(app=app)
+        headers = {"Authorization": f"Bearer {token}"}
+
+        page_count = 0
+        cursor = None
+        all_coupons = []
+
+        with requests.Session() as session:
+            while True:
+                page_count += 1
+
+                params = {
+                    "is_active": "all",
+                    "has_transactions": "all",
+                    "validate_by ": "document"
+
+                }
+                if cursor:
+                    params["cursor"] = cursor
+
+                payload = api.RetryRequest(
+                    session=session,
+                    url=baseEndPoint,
+                    headers=headers,
+                    params=params
+                )
+
+                coupons = payload.get("data", []) or []
+                
+                for coupon in coupons:
+                    row = api.tratarCoupon(coupon)
+                    if row:
+                        all_coupons.append(row)
+
+                
+                cursor = payload.get("next_cursor")
+
+                if not cursor:
+                    break
+
+                if page_count >= max_pages:
+                    print(f"⚠️ Limite de {max_pages} páginas atingido.")
+                    break
+
+        return all_coupons
+    
+    @staticmethod
+    def tratarCoupon(payload):
+    
+        return {
+            "coupon_id": payload.get("id"),
+            "name": payload.get("coupon_code"),
+            
+            # timestamptz no banco
+            "date_ini": api.unix_to_datetime(payload.get("date_ini")),
+            "date_end": api.unix_to_datetime(payload.get("date_end")),
+
+            "incidence_field": payload.get("incidence_field"),
+            "incidence_type": payload.get("incidence_type"),
+            "incidence_value": payload.get("incidence_value"),
+            "is_active": payload.get("is_active"),
+            "plataforma": "Guru"
+        }
+  
+    @staticmethod
+    def getCouponsDF(app):
+        rows = api.getCoupons(
+            app=app
+        )
+
         df = pd.DataFrame(rows)
         return df
 
