@@ -1,29 +1,21 @@
 import requests
-import os, json, time
+import time
 import re
+from config import Config
 
 class api:
     @staticmethod
-    def requisicao(servico, endpoint, metodo='GET', dados=None, params=None, timeout=60, retries=4):
+    def requisicao(endpoint, metodo='GET', dados=None, params=None, timeout=60, retries=4):
         try:
-            script_dir = os.path.dirname(os.path.abspath(__file__))
-            config_path = os.path.join(script_dir, "configActive.json")
-
-            with open(config_path, 'r', encoding="utf-8") as f:
-                config = json.load(f)
-
-            config_servico = config.get(servico)
-            if not config_servico:
-                raise ValueError(f"Serviço {servico} não encontrado no configActive.json")
 
             # Montar a URL e headers
-            url_base = config_servico.get("url", "")
+            url_base = Config.ActiveCampaign.URL
             url = url_base + endpoint
 
             # Montar o headers padrão
             headers = {
                 "accept": "application/json",
-                "Api-Token": config_servico.get("token", "")
+                "Api-Token": Config.ActiveCampaign.TOKEN
             }
 
             for i in range(retries):
@@ -84,7 +76,7 @@ class api:
                 "listid": listid
                 }
 
-            response = api.requisicao(servico="ApiActive", endpoint=endpoint, params=params)
+            response = api.requisicao(endpoint=endpoint, params=params)
 
             if response is None:
                 print((f"Falha ao buscar contatos no offset {offset}."))
@@ -139,7 +131,6 @@ class api:
         endpoint = f"contacts/{contact_id}/contactLists"
 
         response = api.requisicao(
-            servico="ApiActive",
             endpoint=endpoint
             )
 

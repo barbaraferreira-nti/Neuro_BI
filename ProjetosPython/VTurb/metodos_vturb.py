@@ -1,17 +1,14 @@
 import os, json, requests, time
-
+from config import Config
 
 class api:
     @staticmethod
-    def auth(app, endpoint, payload, method):
-        scriptDir = os.path.dirname(os.path.abspath(__file__))
-        configPath = os.path.join(scriptDir, "configVTurb.json")
-        with open(configPath, "r", encoding="utf-8") as f:
-            config = json.load(f)
+    def auth(endpoint, payload, method):
+ 
 
-        urlbase = config[app]["url"]
+        urlbase = Config.VTurb.URL
         url = f"{urlbase}{endpoint}"
-        token = config[app]["token"]
+        token = Config.VTurb.TOKEN
 
         headers = {
             "X-Api-Token": token,
@@ -32,9 +29,9 @@ class api:
         return response.json()
     
     @staticmethod
-    def getPlayers(app):
+    def getPlayers():
         endpoint = 'players/list'
-        dados = api.auth(app=app, endpoint=endpoint, payload=None, method="GET")
+        dados = api.auth(endpoint=endpoint, payload=None, method="GET")
 
         return {
                 p["id"]: {
@@ -48,10 +45,10 @@ class api:
         
     
     @staticmethod
-    def getMetrics(app, start_date, end_date):
+    def getMetrics(start_date, end_date):
         endpoint = 'sessions/stats_by_day'
 
-        players = api.getPlayers(app=app)
+        players = api.getPlayers()
 
         all_data = []
 
@@ -63,7 +60,7 @@ class api:
                 "timezone": "America/Sao_Paulo"
             }
             try:
-                dados = api.auth(app=app, endpoint=endpoint, payload=payload, method="POST")
+                dados = api.auth(endpoint=endpoint, payload=payload, method="POST")
                 all_data.append({
                     "player_id": player_id,
                     "dados": dados
@@ -75,13 +72,10 @@ class api:
         return all_data
     
     @staticmethod
-    def getMetricsDF(app, start_date, end_date):
-        all_data = api.getMetrics(app=app, start_date=start_date, end_date=end_date)
+    def getMetricsDF(start_date, end_date):
+        all_data = api.getMetrics(start_date=start_date, end_date=end_date)
         rows = []
         for item in all_data:
             player_id = item.get("player_id")
             dados = item.get("dados", [])
     
-
-teste = api.getMetrics(app="VTurbApi", start_date="2026-04-07", end_date="2026-04-08")
-print(teste)

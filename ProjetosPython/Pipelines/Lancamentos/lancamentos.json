@@ -11,7 +11,7 @@
     "id_produtos_captacao": ["9fea56de-fbd6-4026-a6d7-015b88f2b6c0", "9c715017-a61c-4d36-9f2f-1686a8d4b4a6", "9c9965c9-74c9-4eb8-ac42-1e9897dcb33b", "9fae9425-d880-493e-8e97-4c961bff0961"],
     "id_offer_captacao":["a103ea15-af19-44b4-b5af-efd658809367", "a103efc0-629c-40c0-993b-f9fc4e5d257f", "a103efe8-91d1-4190-88ea-cd4036ef2f3b", "a103ecb8-144a-405b-9ec2-8b9ca0d1908d","a103ec27-becd-434c-830f-5df9e0548c04"],
     "id_produtos_lancamento": ["9c97a212-769e-4665-a7b7-d786ff8a4c7f","9c9d5295-d4f7-4bf3-b45e-48d03b123b5f", "9c979f1e-8500-4e8f-a268-0ce0d916a265", "9c71468f-b0c4-4948-b0db-49335829ba01", "64591"],
-    "id_offer_lancamento": ["a12cba7d-3586-4a43-8ec4-ac1a8bd3c45d", "a144f6d9-bbd5-435d-a350-d4b6f78851ad", "9f170a3f-cb6c-41e9-b9a8-b6e43449876e", "a148f912-8555-47f2-8988-42804ef1f572", "p0001","p0002", "a15847d7-b912-4f30-a594-ca898b0e4aae","a14863fa-fde0-4320-9d79-0fe57659eac9", "9d15004f-ab91-4d57-bf5e-815ada529337"]
+    "id_offer_lancamento": ["a12cba7d-3586-4a43-8ec4-ac1a8bd3c45d", "a144f6d9-bbd5-435d-a350-d4b6f78851ad", "9f170a3f-cb6c-41e9-b9a8-b6e43449876e", "a148f912-8555-47f2-8988-42804ef1f572", "p0001", "a15847d7-b912-4f30-a594-ca898b0e4aae","a14863fa-fde0-4320-9d79-0fe57659eac9", "9d15004f-ab91-4d57-bf5e-815ada529337"]
     },
     "PROLEIA_0426": {
     "id_lancamento": 2,
@@ -25,7 +25,7 @@
     "id_produtos_captacao": ["9fea56de-fbd6-4026-a6d7-015b88f2b6c0", "9c715017-a61c-4d36-9f2f-1686a8d4b4a6", "9c9965c9-74c9-4eb8-ac42-1e9897dcb33b", "9fae9425-d880-493e-8e97-4c961bff0961"],
     "id_offer_captacao":["a103ea15-af19-44b4-b5af-efd658809367", "a103efc0-629c-40c0-993b-f9fc4e5d257f", "a103efe8-91d1-4190-88ea-cd4036ef2f3b", "a103ecb8-144a-405b-9ec2-8b9ca0d1908d","a103ec27-becd-434c-830f-5df9e0548c04"],
     "id_produtos_lancamento": ["9c97a212-769e-4665-a7b7-d786ff8a4c7f","9c9d5295-d4f7-4bf3-b45e-48d03b123b5f", "9c979f1e-8500-4e8f-a268-0ce0d916a265", "9c71468f-b0c4-4948-b0db-49335829ba01", "64591"],
-    "id_offer_lancamento": ["a12cba7d-3586-4a43-8ec4-ac1a8bd3c45d", "a144f6d9-bbd5-435d-a350-d4b6f78851ad", "9f170a3f-cb6c-41e9-b9a8-b6e43449876e", "a148f912-8555-47f2-8988-42804ef1f572", "p0001", "p0002","a15847d7-b912-4f30-a594-ca898b0e4aae","a14863fa-fde0-4320-9d79-0fe57659eac9", "9d15004f-ab91-4d57-bf5e-815ada529337"]
+    "id_offer_lancamento": ["a12cba7d-3586-4a43-8ec4-ac1a8bd3c45d", "a144f6d9-bbd5-435d-a350-d4b6f78851ad", "9f170a3f-cb6c-41e9-b9a8-b6e43449876e", "a148f912-8555-47f2-8988-42804ef1f572", "p0001", "a15847d7-b912-4f30-a594-ca898b0e4aae","a14863fa-fde0-4320-9d79-0fe57659eac9", "9d15004f-ab91-4d57-bf5e-815ada529337"]
     },
     "POS_MANEJO_0426": {
     "id_lancamento": 3,
@@ -42,17 +42,17 @@
     "id_offer_lancamento": ["a19b553a-db9a-4981-aa13-552fdb194c7c", "a19b55f4-c8cd-45ef-9b0a-737939a3112f"]
     },
     "PROLEIA_0526": {
-    "id_lancamento": 3,
+    "id_lancamento": 2,
     "nome_lancamento": "PROLEIA_0526",
     "inicio_captacao": "2026-04-13",
     "fim_captacao": "2026-05-10",
     "inicio_lancamento": "2026-05-13",
     "fim_lancamento": "2026-05-31",
-    "campanha_sendflow": "Oficina da NeuroAlfabetização (MAIO)",
+    "campanha_sendflow": " Oficina da NeuroAlfabetização (MAIO)",
     "contaMeta": "260935725436002",
     "id_produtos_captacao": ["9fea56de-fbd6-4026-a6d7-015b88f2b6c0", "9c715017-a61c-4d36-9f2f-1686a8d4b4a6", "9c9965c9-74c9-4eb8-ac42-1e9897dcb33b", "9fae9425-d880-493e-8e97-4c961bff0961"],
     "id_offer_captacao":["a103ea15-af19-44b4-b5af-efd658809367", "a103efc0-629c-40c0-993b-f9fc4e5d257f", "a103efe8-91d1-4190-88ea-cd4036ef2f3b", "a103ecb8-144a-405b-9ec2-8b9ca0d1908d","a103ec27-becd-434c-830f-5df9e0548c04"],
     "id_produtos_lancamento": ["9c97a212-769e-4665-a7b7-d786ff8a4c7f","9c9d5295-d4f7-4bf3-b45e-48d03b123b5f", "9c979f1e-8500-4e8f-a268-0ce0d916a265", "9c71468f-b0c4-4948-b0db-49335829ba01", "64591"],
-    "id_offer_lancamento": ["a12cba7d-3586-4a43-8ec4-ac1a8bd3c45d", "a144f6d9-bbd5-435d-a350-d4b6f78851ad", "9f170a3f-cb6c-41e9-b9a8-b6e43449876e", "a148f912-8555-47f2-8988-42804ef1f572", "p0001", "p0002","a15847d7-b912-4f30-a594-ca898b0e4aae","a14863fa-fde0-4320-9d79-0fe57659eac9", "9d15004f-ab91-4d57-bf5e-815ada529337"]
+    "id_offer_lancamento": ["a12cba7d-3586-4a43-8ec4-ac1a8bd3c45d", "a144f6d9-bbd5-435d-a350-d4b6f78851ad", "9f170a3f-cb6c-41e9-b9a8-b6e43449876e", "a148f912-8555-47f2-8988-42804ef1f572", "p0001", "a15847d7-b912-4f30-a594-ca898b0e4aae","a14863fa-fde0-4320-9d79-0fe57659eac9", "9d15004f-ab91-4d57-bf5e-815ada529337"]
     }
 }

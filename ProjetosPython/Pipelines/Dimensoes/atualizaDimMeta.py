@@ -47,7 +47,7 @@ allCampaigns = []
 print("Iniciando atualização da dimensão 'campanhas' da Meta das contas da Neurosaber...")
 
 for nome, id in dic_contas_meta_neurosaber.items():
-        dados_campanhas = metodos_meta.api.getDadosConta(app="Time_NTI", ambiente="neurosaber",
+        dados_campanhas = metodos_meta.api.getDadosConta(ambiente="neurosaber",
                                                 periodo=[dataI, dataF], 
                                                 campos=["account_id", "account_name","campaign_id", "campaign_name"], 
                                                 nivel="campaign", 
@@ -94,7 +94,7 @@ print("Iniciando atualização da dimensão 'anúncios' da Meta das contas da Ne
 allAds = []
 
 for nome, id in dic_contas_meta_neurosaber.items():
-        dados_meta = metodos_meta.api.getDadosConta(app="Time_NTI", ambiente="neurosaber",
+        dados_meta = metodos_meta.api.getDadosConta(ambiente="neurosaber",
                                                periodo=[dataI, dataF], 
                                                campos=["ad_id", "ad_name"], 
                                                nivel="ad", 
@@ -141,7 +141,7 @@ print("Iniciando atualização da dimensão 'campanhas' da Meta das contas da Si
 allCampaigns = []
 
 for nome, id in dic_contas_meta_sinahpse.items():
-        dados_campanhas = metodos_meta.api.getDadosConta(app="Time_NTI", ambiente="sinahpse",
+        dados_campanhas = metodos_meta.api.getDadosConta(ambiente="sinahpse",
                                                 periodo=[dataI, dataF], 
                                                 campos=["account_id", "account_name","campaign_id", "campaign_name"], 
                                                 nivel="campaign", 
@@ -186,7 +186,7 @@ print("Iniciando atualização da dimensão 'anúncios' da Meta das contas da Si
 allAds = []
 
 for nome, id in dic_contas_meta_sinahpse.items():
-        dados_meta = metodos_meta.api.getDadosConta(app="Time_NTI", ambiente="sinahpse",
+        dados_meta = metodos_meta.api.getDadosConta(ambiente="sinahpse",
                                                periodo=[dataI, dataF], 
                                                campos=["ad_id", "ad_name"], 
                                                nivel="ad", 

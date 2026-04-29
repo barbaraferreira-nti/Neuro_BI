@@ -2,23 +2,21 @@ from datetime import datetime
 import time
 import requests 
 import psycopg2
-import os, json
 from datetime import datetime, timedelta, timezone
+from config import Config
+import os
 
-with open("C:\\Users\\Administrator\\Neuro_BI\\ProjetosPython\\Pipelines\\Octadesk\\log_execucao.txt", "a", encoding="utf-8") as f:
+script_dir = os.path.dirname(os.path.abspath(__file__))
+log_path = os.path.join(script_dir, "log_execucao.txt")
+with open(log_path, "a", encoding="utf-8") as f:
     f.write(f"Iniciado em {datetime.now()}\n")
 
 # =========================
 # CONFIGURAÇÕES
 # =========================
-scriptDir = os.path.dirname(os.path.abspath(__file__))
-configPath = os.path.join(scriptDir, "configOctadesk.json")
-with open(configPath, "r", encoding="utf-8") as f:
-    config = json.load(f)
 
-app = "OctadeskApi"
-token = config[app]["token"]
-URL = config[app]["url"]
+token = Config.Octadesk.TOKEN
+URL = Config.Octadesk.URL_CHAT
 
 HEADERS = {
     "x-api-key": token,
