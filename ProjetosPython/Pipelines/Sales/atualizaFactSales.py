@@ -98,11 +98,7 @@ print("Dados de vendas da Guru atualizados com sucesso!")
 try:
     print(f"Buscando dados de vendas da Principia para o período de {dataI} a {dataF}...")
 
-<<<<<<< HEAD
     df = metodosPrincipia.api.getSalesDF(periodo=[dataI, dataF], ambiente="url_prod")
-=======
-    df = metodosPrincipia.api.getSalesDF(app="PrincipiaApi", periodo=[dataI, dataF], ambiente="url_prod")
->>>>>>> upstream/main
 
     if df.empty:
         print("Aviso: nenhum dado retornado.")
