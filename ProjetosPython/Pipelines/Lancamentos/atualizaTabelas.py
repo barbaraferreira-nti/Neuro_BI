@@ -83,7 +83,7 @@ for nomeArquivo in nomes_arquivos:
             UPDATE public.fact_sales
             SET id_lancamento = %s
             WHERE ordered_at::date BETWEEN %s AND %s
-              AND product_guru_id = ANY(%s)
+              AND product_id = ANY(%s)
               AND offer_id = ANY(%s)
         """, (idLancamento, inicioCapt, fimCapt, id_produtos_captacao, id_offer_captacao))
 
@@ -94,7 +94,7 @@ for nomeArquivo in nomes_arquivos:
             UPDATE public.fact_sales
             SET id_lancamento = %s
             WHERE ordered_at::date BETWEEN %s AND %s
-              AND product_guru_id = ANY(%s)
+              AND product_id = ANY(%s)
               AND offer_id = ANY(%s)
         """, (idLancamento, inicioLanc, fimLanc, id_produtos_lancamento, id_offer_lancamento))
 

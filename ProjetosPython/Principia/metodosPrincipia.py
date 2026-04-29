@@ -1,18 +1,18 @@
 import os, json, requests, re
 import pandas as pd
 from datetime import datetime, timezone
+from config import Config
 
 
 class api:
     @staticmethod
-    def requisicao(app, ambiente, endpoint, metodo="GET", dados=None, params=None):
-        scriptDir = os.path.dirname(os.path.abspath(__file__))
-        configPath = os.path.join(scriptDir, "configPrincipia.json")
-        with open(configPath, "r", encoding="utf-8") as f:
-            config = json.load(f)
-        
-        baseEndPoint = config[app][ambiente]
-        token = config[app]["token"]
+    def requisicao(ambiente, endpoint, metodo="GET", dados=None, params=None):
+
+        if ambiente == "prod":
+            baseEndPoint = Config.Principia.URL_PROD
+        else:
+            baseEndPoint = Config.Principia.URL_DEV
+        token = Config.Principia.TOKEN
 
         headers = {
                 "accept": "application/json",
@@ -33,7 +33,7 @@ class api:
         return response.json()
         
     @staticmethod
-    def getSales(app, periodo=None,ambiente=None,endpoint='sales'):
+    def getSales( periodo=None,ambiente=None,endpoint='sales'):
         dataI, dataF = periodo[0], periodo[1]
 
         pagina = 1
@@ -49,7 +49,6 @@ class api:
             }
 
             response = api.requisicao(
-                app=app, 
                 ambiente=ambiente, 
                 endpoint=endpoint, 
                 params=params
@@ -69,7 +68,7 @@ class api:
         return todas_vendas
     
     @staticmethod
-    def getCourses(app,ambiente=None,endpoint='courses'):
+    def getCourses(ambiente=None,endpoint='courses'):
         pagina = 1
         limite = 50
         todos_cursos = []
@@ -81,7 +80,6 @@ class api:
             }
 
             response = api.requisicao(
-                app=app, 
                 ambiente=ambiente, 
                 endpoint=endpoint, 
                 params=params
@@ -101,14 +99,13 @@ class api:
         return todos_cursos
     
     @staticmethod
-    def getCourseClasses(app, ambiente):
+    def getCourseClasses(ambiente):
         pagina = 1
         limite = 50
         todas_classes = []
 
         while True:
             payload = api.requisicao(
-                app=app,
                 ambiente=ambiente,
                 endpoint="courses",
                 params={
@@ -126,7 +123,6 @@ class api:
                     continue
 
                 payload_classes = api.requisicao(
-                    app=app,
                     ambiente=ambiente,
                     endpoint="course-classes",
                     params={"CourseId": course_id}

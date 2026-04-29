@@ -1,20 +1,19 @@
-## Arquivo que cria os métodos para buscar dados da API
-
 import pandas as pd
 import requests
 import os, json, time
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 import random
+from config import Config
 
 class api:
     @staticmethod
-    def auth(app, ambiente):
-        scriptDir = os.path.dirname(os.path.abspath(__file__))
-        configPath = os.path.join(scriptDir, "configMeta.json")
-        with open(configPath, "r", encoding="utf-8") as f:
-            config = json.load(f)
-        return config[app]["token"][ambiente]
+    def auth(ambiente):
+        if ambiente=="neurosaber":
+            token = Config.Meta.TOKEN_NEUROSABER
+        else:
+            token = Config.Meta.TOKEN_SINAHPSE
+        return token
     
     @staticmethod
     def make_session():
@@ -88,19 +87,19 @@ class api:
         raise Exception(f"Erro persistente na URL: {url}. Última exceção: {last_exc}")
 
     @staticmethod
-    def getDadosConta(app=None,ambiente=None, periodo=[], campos=[], nivel=None, contaAnuncio=None):
+    def getDadosConta(ambiente=None, periodo=[], campos=[], nivel=None, contaAnuncio=None):
         periodo = periodo or []
         camposList = campos or []
         if len(periodo) != 2:
             raise ValueError("período deve ser [dataInicio, dataFim] no formato YYYY-MM-DD")
         
-        scriptDir = os.path.dirname(os.path.abspath(__file__))
-        configPath = os.path.join(scriptDir, "configMeta.json")
-        with open(configPath, "r", encoding="utf-8") as f:
-            config = json.load(f)
-        
-        baseEndPoint = config[app]["apiEndPoints"]["facebook"]
-        token = config[app]["token"][ambiente]
+        baseEndPoint = Config.Meta.URL_FACEBOOK
+        tokens = {
+            "neurosaber": Config.Meta.TOKEN_NEUROSABER,
+            "sinahpse": Config.Meta.TOKEN_SINAHPSE
+        }
+
+        token = tokens.get(ambiente)
 
         headers = {"Authorization": f"Bearer {token}"}
         url = f"{baseEndPoint}act_{contaAnuncio}/insights"
@@ -113,8 +112,6 @@ class api:
             "level": nivel,
             "action_breakdowns": "action_video_type"
         }
-
-
 
         resultados = []
         with requests.Session() as session:
