@@ -1,5 +1,0 @@
-{"PrincipiaApi":{
-    "url_prod": "https://ms-checkout.provi.com.br/v4/",
-    "url_dev": "https://ms-checkout-staging.provi.com.br/v4/",
-    "token": "SEU_TOKEN"
-}}

@@ -1,17 +1,15 @@
-import os, json, time, random
+import time, random
 from datetime import datetime, timezone
 import requests
 import pandas as pd
 import re
+from config import Config
 
 class api:
     @staticmethod
-    def auth(app):
-        scriptDir = os.path.dirname(os.path.abspath(__file__))
-        configPath = os.path.join(scriptDir, "configGuru.json")
-        with open(configPath, "r", encoding="utf-8") as f:
-            config = json.load(f)
-        return config.get(app, {}).get("token")
+    def auth():
+        token = Config.Guru.TOKEN
+        return token
     
     @staticmethod
     def RetryRequest(session, url, headers=None, params=None, retries=11, timeout=60):
@@ -92,14 +90,9 @@ class api:
         return value
 
     @staticmethod
-    def getTransactions(app, periodo, per_page=50, max_pages=600):
-        scriptDir = os.path.dirname(os.path.abspath(__file__))
-        configPath = os.path.join(scriptDir, "configGuru.json")
-        with open(configPath, "r", encoding="utf-8") as f:
-            config = json.load(f)
-
-        baseEndPoint = config[app]["url"]["transactions"]
-        token = api.auth(app=app)
+    def getTransactions(periodo, per_page=50, max_pages=600):
+        baseEndPoint = Config.Guru.URL_TRANSACTIONS
+        token = Config.Guru.TOKEN
         headers = {"Authorization": f"Bearer {token}"}
         dataI, dataF = periodo[0], periodo[1]
 
@@ -144,14 +137,9 @@ class api:
         return all_transactions
 
     @staticmethod
-    def getIdTransaction(app, invoice_id):
-        scriptDir = os.path.dirname(os.path.abspath(__file__))
-        configPath = os.path.join(scriptDir, "configGuru.json")
-        with open(configPath, "r", encoding="utf-8") as f:
-            config = json.load(f)
-
-        baseEndPoint = config[app]["url"]["transactions"]
-        token = api.auth(app=app)
+    def getIdTransaction(invoice_id):
+        baseEndPoint = Config.Guru.URL_TRANSACTIONS
+        token = Config.Guru.TOKEN
 
         headers = {"Authorization": f"Bearer {token}"}
         url = f"{baseEndPoint}{invoice_id}"
@@ -166,14 +154,9 @@ class api:
         return payload
 
     @staticmethod
-    def getContacts(app, periodo, per_page=50, max_pages=600):
-        scriptDir = os.path.dirname(os.path.abspath(__file__))
-        configPath = os.path.join(scriptDir, "configGuru.json")
-        with open(configPath, "r", encoding="utf-8") as f:
-            config = json.load(f)
-
-        baseEndPoint = config[app]["url"]["contacts"]
-        token = api.auth(app=app)
+    def getContacts(periodo, per_page=50, max_pages=600):
+        baseEndPoint = Config.Guru.URL_CONTACTS
+        token = Config.Guru.TOKEN
         headers = {"Authorization": f"Bearer {token}"}
         dataI, dataF = periodo[0], periodo[1]
 
@@ -218,14 +201,9 @@ class api:
         return all_contacts
 
     @staticmethod
-    def getProducts(app, per_page=50, max_pages=600):
-        scriptDir = os.path.dirname(os.path.abspath(__file__))
-        configPath = os.path.join(scriptDir, "configGuru.json")
-        with open(configPath, "r", encoding="utf-8") as f:
-            config = json.load(f)
-
-        baseEndPoint = config[app]["url"]["products"]
-        token = api.auth(app=app)
+    def getProducts(per_page=50, max_pages=600):
+        baseEndPoint = Config.Guru.URL_PRODUCTS
+        token = Config.Guru.TOKEN
         headers = {"Authorization": f"Bearer {token}"}
         
         page_count = 0
@@ -269,7 +247,7 @@ class api:
         return all_products
 
     @staticmethod
-    def getProductOffers(app, product_id, session, headers):
+    def getProductOffers(product_id, session, headers):
     
         url = f"https://digitalmanager.guru/api/v2/products/{product_id}/offers"
 
@@ -297,15 +275,9 @@ class api:
         }
                        
     @staticmethod
-    def getOffers(app, per_page=50, max_pages=600):
-        scriptDir = os.path.dirname(os.path.abspath(__file__))
-        configPath = os.path.join(scriptDir, "configGuru.json")
-        
-        with open(configPath, "r", encoding="utf-8") as f:
-            config = json.load(f)
-
-        baseEndPoint = config[app]["url"]["products"]
-        token = api.auth(app=app)
+    def getOffers(per_page=50, max_pages=600):
+        baseEndPoint = Config.Guru.URL_PRODUCTS
+        token = Config.Guru.TOKEN
         headers = {"Authorization": f"Bearer {token}"}
 
         page_count = 0
@@ -490,9 +462,8 @@ class api:
         }
     
     @staticmethod
-    def getTransactionsDF(app, periodo):
+    def getTransactionsDF(periodo):
         rows = api.getTransactions(
-            app=app,
             periodo=periodo
         )
 
@@ -500,41 +471,31 @@ class api:
         return df
     
     @staticmethod
-    def getContactsDF(app, periodo):
+    def getContactsDF(periodo):
         rows = api.getContacts(
-            app=app,
             periodo=periodo)
 
         df = pd.DataFrame(rows)
         return df
     
     @staticmethod
-    def getProductsDF(app):
-        rows = api.getProducts(
-            app=app
-        )
+    def getProductsDF():
+        rows = api.getProducts()
 
         df = pd.DataFrame(rows)
         return df
     
     @staticmethod
-    def getOffersDF(app):
-        rows = api.getOffers(
-            app=app
-            )
+    def getOffersDF():
+        rows = api.getOffers()
+
         df = pd.DataFrame(rows)
         return df
 
     @staticmethod
-    def getCoupons(app, max_pages=600):
-        scriptDir = os.path.dirname(os.path.abspath(__file__))
-        configPath = os.path.join(scriptDir, "configGuru.json")
-        
-        with open(configPath, "r", encoding="utf-8") as f:
-            config = json.load(f)
-
-        baseEndPoint = config[app]["url"]["coupons"]
-        token = api.auth(app=app)
+    def getCoupons(max_pages=600):
+        baseEndPoint = Config.Guru.URL_COUPONS
+        token = Config.Guru.TOKEN
         headers = {"Authorization": f"Bearer {token}"}
 
         page_count = 0
@@ -599,10 +560,8 @@ class api:
         }
   
     @staticmethod
-    def getCouponsDF(app):
-        rows = api.getCoupons(
-            app=app
-        )
+    def getCouponsDF():
+        rows = api.getCoupons()
 
         df = pd.DataFrame(rows)
         return df

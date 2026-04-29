@@ -2,13 +2,12 @@
 __pycache__/
 *.py[codz]
 *$py.class
-configSupabase.json
-ProjetosPython/Supabase/configSupabase.json
-ProjetosPython/ActiveCampaign/configActive.json
-ProjetosPython/Guru/configGuru.json
-ProjetosPython/MetaAds/configMeta.json
-ProjetosPython/Manychat/configManychat.json
-ProjetosPython/Principia/configPrincipia.json
+
+# logs
+log_execucao.txt
+
+# configs sensíveis
+configGoogle.json
 
 # C extensions
 *.so
