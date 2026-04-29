@@ -1,7 +1,5 @@
 ## Arquivo que cria os métodos para buscar dados da API
 from config import Config
-import os, json
-import requests
 from supabase import create_client
 import pandas as pd
 

@@ -1,9 +1,6 @@
-import os, json, datetime
-from Supabase import metodos_supabase
+import os, json
 import psycopg2
 from psycopg2.extras import execute_values
-
-
 
 """
 ARQUIVO QUE ATUALIZARÁ AS TABELAS NECESSÁRIAS PARA O DASHBOARD DE
@@ -11,10 +8,7 @@ ACOMPANHAMENTO DOS LANÇAMENTOS (PAGOS E GRÁTIS)
 """
 
 # Lista dos lançamentos que deseja atualizar
-nomes_arquivos = [
-    "PROLEIA_0426",
-    "POS_MANEJO_0426"
-]
+nomes_arquivos = []
 
 conexao = psycopg2.connect(
         host="aws-1-us-east-1.pooler.supabase.com",

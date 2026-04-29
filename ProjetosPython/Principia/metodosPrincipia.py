@@ -33,7 +33,7 @@ class api:
         return response.json()
         
     @staticmethod
-    def getSales( periodo=None,ambiente=None,endpoint='sales'):
+    def getSales(periodo=None,ambiente=None,endpoint='sales'):
         dataI, dataF = periodo[0], periodo[1]
 
         pagina = 1
@@ -299,13 +299,11 @@ class api:
         }
     
     @staticmethod
-    def getSalesDF(app, periodo, ambiente):
+    def getSalesDF(periodo, ambiente):
         rows = api.getSales(
-            app=app,
             periodo=periodo,
             ambiente=ambiente
         )
-
 
         rows_tratadas = [api.tratarSales(row) for row in rows]
 
@@ -314,11 +312,8 @@ class api:
         
 
     @staticmethod
-    def getCoursesDF(app,ambiente=None):
-        rows = api.getCourses(
-            app=app,
-            ambiente=ambiente
-        )
+    def getCoursesDF(ambiente=None):
+        rows = api.getCourses(ambiente=ambiente)
 
         rows_tratadas = [api.tratarCourses(row) for row in rows]
 
@@ -326,11 +321,8 @@ class api:
         return df
 
     @staticmethod
-    def getCourseClassesDF(app, ambiente):
-        rows = api.getCourseClasses(
-            app=app,
-            ambiente=ambiente
-        )
+    def getCourseClassesDF(ambiente):
+        rows = api.getCourseClasses(ambiente=ambiente)
         df = pd.DataFrame(rows)
         return df
     
