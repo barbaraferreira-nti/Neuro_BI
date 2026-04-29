@@ -17,7 +17,8 @@ dic_contas_meta_sinahpse = {
     "CA - 01 - Teste Perpétuos NS": "2357097777954786",
     "Matemagica": "531329858353944",
     "TDAH na Escola": "2354015068250801",
-    "LANÇAMENTOS": "386267435573477"
+    "LANÇAMENTOS": "386267435573477",
+    "Perpetuos": "411919152706872"
 }
 
 dic_contas_meta_neurosaber= {
