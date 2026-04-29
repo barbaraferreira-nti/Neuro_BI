@@ -366,5 +366,5 @@ print("🎯 Total separado para carga:", total_candidates)
 print("✅ Total processado no Supabase:", total_upserted)
 print(f"⏱️ Tempo total: {elapsed:.2f} segundos")
 
-with open("C:\\Users\\Barbara\\Neuro_BI\\ProjetosPython\\Octadesk\\log_execucao.txt", "a", encoding="utf-8") as f:
+with open("C:\\Users\\Administrator\\Neuro_BI\\ProjetosPython\\Pipelines\\Octadesk\\log_execucao.txt", "a", encoding="utf-8") as f:
     f.write(f"Finalizado em {datetime.now()}\n\n")

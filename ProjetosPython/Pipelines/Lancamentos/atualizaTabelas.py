@@ -13,7 +13,8 @@ ACOMPANHAMENTO DOS LANÇAMENTOS (PAGOS E GRÁTIS)
 # Lista dos lançamentos que deseja atualizar
 nomes_arquivos = [
     "PROLEIA_0426",
-    "POS_MANEJO_0426"
+    "POS_MANEJO_0426",
+    "PROLEIA_0526"
 ]
 
 conexao = psycopg2.connect(

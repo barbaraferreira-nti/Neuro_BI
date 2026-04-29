@@ -50,7 +50,7 @@ try:
         dados_supabase = metodos_meta.api.transformarDadosSupabase(dados_meta)
 
 
-        upsert = metodos_supabase.api.upsert_data(banco="Guru_DB", tabela="fact_meta", dados=dados_supabase, chave="account_id,campaign_id,ad_id,date_start")
+        upsert = metodos_supabase.api.upsert_data(banco="Guru_DB", tabela="fact_meta", dados=dados_supabase, chave="account_id, campaign_id, ad_id, date_start")
 except Exception as e:
     print(f"Erro ao atualizar os dados da conta 'Neurosaber' na tabela 'fact_meta'.")
     print(str(e))
@@ -74,7 +74,7 @@ try:
         dados_supabase = metodos_meta.api.transformarDadosSupabase(dados_meta)
 
 
-        upsert = metodos_supabase.api.upsert_data(banco="Guru_DB", tabela="fact_meta", dados=dados_supabase, chave="account_id,campaign_id,ad_id,date_start")
+        upsert = metodos_supabase.api.upsert_data(banco="Guru_DB", tabela="fact_meta", dados=dados_supabase, chave="account_id, campaign_id, ad_id, date_start")
 except Exception as e:
     print(f"Erro ao atualizar os dados da conta 'Sinahpse' na tabela 'fact_meta'.")
     print(str(e))
