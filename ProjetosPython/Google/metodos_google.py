@@ -51,13 +51,18 @@ class api:
         with open(caminho_json, "r", encoding="utf-8") as f:
             config = json.load(f)
 
-        return {
-            "id_planilha": config["id"],
-            "spreadsheet_id": config["spreadsheet_id"],
-            "aba": config["aba"],
-            "id_aba": config["gid"],
-            "url": config.get("url")
-        }
+        planilhas = []
+
+        for nome_planilha, dados in config.items():
+            planilhas.append({
+            "nome_planilha": nome_planilha,
+            "id_planilha": dados["id"],
+            "spreadsheet_id": dados["spreadsheet_id"],
+            "aba": dados["aba"],
+            "id_aba": dados["gid"],
+            "url": dados["url"]
+            })
+        return planilhas
 
         
 

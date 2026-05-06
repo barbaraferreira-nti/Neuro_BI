@@ -72,7 +72,11 @@ class api:
                         pass
 
                     r.raise_for_status()
-
+                
+                if r.status_code >= 400:
+                    print("STATUS:", r.status_code)
+                    print("RESPOSTA meta:", r.text)
+                    
                 r.raise_for_status()
                 return r.json()
 
@@ -110,7 +114,7 @@ class api:
             "time_range": json.dumps({"since": dataInicio, "until": dataFim}), 
             "time_increment": 1,
             "level": nivel,
-            "action_breakdowns": "action_video_type"
+            #"action_breakdowns": "action_video_type"
         }
 
         resultados = []

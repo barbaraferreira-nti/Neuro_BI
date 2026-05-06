@@ -271,7 +271,8 @@ class api:
         "principia_course_class_id": course.get("courseClassId"),
         "principia_creator": payload.get("creator"),
 
-        "plataforma": "Principia"
+        "plataforma": "Principia",
+        "upsert_time": datetime.now(timezone.utc)
         }
    
     @staticmethod

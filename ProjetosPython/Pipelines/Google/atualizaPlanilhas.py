@@ -59,12 +59,24 @@ MAPA_COLUNAS_KICKOFF = {
     "col_7": "q5"
 }
 
-MAPA_COLUNAS_NPS = {
+MAPA_COLUNAS_NPS_INICIAL = {
      "col_1": "data",
      "col_2": "municipio",
      "col_3": "email",
      "col_4": "q1",
      "col_5": "q2"
+}
+
+MAPA_COLUNAS_NPS_FINAL = {
+     "col_1": "data",
+     "col_2": "email",
+     "col_3": "q1",
+     "col_4": "q2",
+     "col_5": "q3",
+     "col_6": "q4",
+     "col_7": "q5",
+     "col_8": "q6",
+     "col_9": "q7"
 }
 
 def processar_planilha(service, config: Dict[str, str], banco, tabela, mapa) -> int:
@@ -176,6 +188,27 @@ for planilha in planilhas_kickoff:
 print(f"Total linhas inseridas na tabela {tabela_kickoff}: {total_kickoff}")
 
 ## 03. NPS e CSAT
-planilha_nps = metodos_google.api.carregar_config_planilha_nps("planilha_neuroescola_nps.json")
-qtd = processar_planilha_nps(service,planilha_nps, banco, tabela_nps, MAPA_COLUNAS_NPS)
-print(f"Total linhas inseridas na tabela {tabela_nps}: {qtd}")
+planilhas_nps = metodos_google.api.carregar_config_planilha_nps("planilha_neuroescola_nps.json")
+total_nps = 0
+planilha_nps_inicial = {"NPS_Inicial"}
+
+for planilha in planilhas_nps:
+
+    if planilha["nome_planilha"] == "NPS_Inicial":
+        mapa = MAPA_COLUNAS_NPS_INICIAL
+    else:
+        mapa = MAPA_COLUNAS_NPS_FINAL
+
+    qtd = processar_planilha_nps(
+        service,
+        planilha,
+        banco,
+        tabela_nps,
+        mapa
+    )
+
+    print(f"{planilha['nome_planilha']}: {qtd} linhas processadas")
+
+    total_nps += qtd
+
+print(f"Total linhas inseridas na tabela {tabela_nps}: {total_nps}")

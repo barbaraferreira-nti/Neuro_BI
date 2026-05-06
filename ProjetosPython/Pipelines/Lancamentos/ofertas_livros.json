@@ -1,0 +1,12 @@
+{
+    "POS_MANEJO_0426": {
+    "id_lancamento": 3,
+    "nome_lancamento": "POS_MANEJO_0426",
+    "inicio_lancamento": "2026-04-29",
+    "fim_lancamento": "2026-05-09",
+    "id_produtos_lancamento": ["a160ed82-455b-4339-b9ef-a26e6e91db50"],
+    "id_offer_lancamento": ["a1a77f43-f944-4e23-86a1-8498fdf3f37b", "a1aae301-ab52-4918-b215-58f7e29aa811"],
+    "id_produto_livro": ["9ca371c9-4561-4d33-b0d1-9234fc1d2c87"],
+    "id_produto_guru_livro": ["1722257970"]
+    }
+}
