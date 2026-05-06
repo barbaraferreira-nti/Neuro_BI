@@ -1,0 +1,130 @@
+from Supabase import metodos_supabase
+import psycopg2
+import os, json
+from copy import deepcopy
+import pandas as pd
+import numpy as np
+from datetime import datetime, date
+from decimal import Decimal
+
+## Pipeline para espelhar vendas com oferta de Livro incluso
+
+conexao = psycopg2.connect(
+        host="aws-1-us-east-1.pooler.supabase.com",
+        database="postgres",
+        user="postgres.yswgoojqqpwlfmxxuink",
+        password="Aveces16.1612",
+        port="5432"
+    )
+
+def espelhar_venda(venda, novo_product_id, novo_product_id_guru):
+    nova_venda = deepcopy(venda)
+
+    id_original = venda.get("id")
+
+    nova_venda["id"] = f"{id_original}_espelho_{novo_product_id}"
+
+    nova_venda["product_id"] = novo_product_id
+    nova_venda["product_guru_id"] =novo_product_id_guru
+
+    return nova_venda
+
+def normalizar_json(df):
+    def tratar_valor(x):
+        if pd.isna(x):
+            return None
+
+        if isinstance(x, pd.Timestamp):
+            return x.isoformat()
+
+        if isinstance(x, (datetime, date)):
+            return x.isoformat()
+
+        if isinstance(x, Decimal):
+            return float(x)
+
+        if isinstance(x, str):
+            return x.replace("\x00", "")
+
+        if isinstance(x, float) and np.isnan(x):
+            return None
+
+        return x
+
+    return df.astype(object).map(tratar_valor)
+
+
+
+# Lista dos lançamentos que deseja atualizar
+nomes_arquivos = ["POS_MANEJO_0426"]
+
+### TRAZENDO OS DADOS DO JSON
+scriptDir = os.path.dirname(os.path.abspath(__file__))
+configPath = os.path.join(scriptDir, "ofertas_livros.json")
+
+with open(configPath, "r", encoding="utf-8") as f:
+    config = json.load(f)
+
+### LOOP PRINCIPAL
+for nomeArquivo in nomes_arquivos:
+
+    if nomeArquivo not in config:
+        print(f"[AVISO] {nomeArquivo} não encontrado no JSON")
+        continue
+
+    print(f"\n--- Processando {nomeArquivo} ---")
+
+    dados = config[nomeArquivo]
+
+    idLancamento = dados["id_lancamento"]
+    inicioLanc = dados["inicio_lancamento"]
+    fimLanc = dados["fim_lancamento"]
+    id_produtos= dados["id_produtos_lancamento"]
+    id_offers = dados["id_offer_lancamento"]
+    id_produto_livro = dados["id_produto_livro"][0]
+    id_produto_guru_livro = dados["id_produto_guru_livro"][0]
+
+    try:
+        cur = conexao.cursor()
+
+        cur.execute("""
+            SELECT *
+            FROM public.fact_sales
+            WHERE ordered_at::date BETWEEN %s AND %s
+            AND product_id = ANY(%s)
+            AND offer_id = ANY(%s)
+            AND status = 'approved'
+        """, (inicioLanc, fimLanc, id_produtos, id_offers))
+
+        rows = cur.fetchall()
+        colunas = [desc[0] for desc in cur.description]
+        df = pd.DataFrame(rows, columns=colunas)
+
+        if df.empty:
+            print(f"Nenhuma venda encontrada para {nomeArquivo}")
+            continue
+
+        df = normalizar_json(df)
+
+        vendas_originais = df.to_dict(orient="records")
+
+        vendas_espelhadas = [
+            espelhar_venda(venda, id_produto_livro, id_produto_guru_livro)
+            for venda in vendas_originais
+        ]
+
+        upsert = metodos_supabase.api.upsert_data(
+            banco="Guru_DB",
+            tabela="fact_sales",
+            dados=vendas_espelhadas,
+            chave="id"
+        )
+
+        print(f"{len(vendas_espelhadas)} vendas espelhadas para {nomeArquivo}")
+
+    except Exception as e:
+        conexao.rollback()
+        print(f"Erro no {nomeArquivo}: {e}")
+
+    finally:
+        cur.close()

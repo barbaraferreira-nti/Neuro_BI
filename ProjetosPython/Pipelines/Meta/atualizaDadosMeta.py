@@ -28,8 +28,8 @@ dic_contas_meta_neurosaber = {
 }
 
 
-dataI = (datetime.date.today() - datetime.timedelta(days=5)).strftime("%Y-%m-%d")
-dataF = (datetime.date.today() - datetime.timedelta(days=1)).strftime("%Y-%m-%d")
+dataI = (datetime.date.today() - datetime.timedelta(days=3)).strftime("%Y-%m-%d")
+dataF = datetime.date.today().strftime("%Y-%m-%d")
 
 
 # Atualizando os dados da 'NeuroSaber'

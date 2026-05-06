@@ -100,6 +100,7 @@ class api:
         cursor = None 
 
         all_transactions = []
+        invoice_cache = {}
         with requests.Session() as session:
             while True:
                 page_count += 1
@@ -122,7 +123,33 @@ class api:
                 transactions = payload.get("data", []) or []
                 
                 for transaction in transactions:
-                    row = api.tratarTransaction(transaction)
+                    invoice_cycle = None
+                    invoice = transaction.get("invoice", {}) or {}
+                    subscription_raw = transaction.get("subscription", {}) or {}
+
+                    if isinstance(subscription_raw, list):
+                        subscription = subscription_raw[0] if subscription_raw else {}
+                    elif isinstance(subscription_raw, dict):
+                        subscription = subscription_raw
+                    else:
+                        subscription = {}
+
+                    subscription_id = subscription.get("id")
+                    invoice_id = invoice.get("id")
+                    cache_key = (subscription_id, invoice_id)
+
+                    if subscription_id and invoice_id:
+                        if cache_key not in invoice_cache:
+                            invoice_cache[cache_key] = api.getInvoiceCycle(
+                                session=session,
+                                headers=headers,
+                                subscription_id=subscription_id,
+                                invoice_id=invoice_id
+                            )
+
+                            invoice_cycle = invoice_cache[cache_key]
+
+                    row = api.tratarTransaction(transaction, invoice_cycle=invoice_cycle)
                     all_transactions.append(row)
 
                 cursor = payload.get("next_cursor")
@@ -341,21 +368,15 @@ class api:
         return all_offers
 
     @staticmethod
-    def tratarTransaction(payload):
+    def tratarTransaction(payload, invoice_cycle=None):
         contact = payload.get("contact", {}) or {}
         dates = payload.get("dates", {}) or {}
         product = payload.get("product", {}) or {}
         payment = payload.get("payment", {}) or {}
         trackings = payload.get("trackings", {}) or {}
         installments = payment.get("installments", {}) or {}
-
-        subscription_raw = payload.get("subscription", [])
-        if isinstance(subscription_raw, list):
-            subscription = subscription_raw[0] if subscription_raw else {}
-        elif isinstance(subscription_raw, dict):
-            subscription = subscription_raw
-        else:
-            subscription = {}
+        invoice = payload.get("invoice", {}) or {}
+        subscription = payload.get("subscription", {}) or {}
 
         offer = product.get("offer", {}) or {}
         coupon = payment.get("coupon", {}) or {}
@@ -413,7 +434,11 @@ class api:
             "plataforma": "Guru",
             "coupon_id": coupon.get("id"),
             "coupon_code": coupon.get("coupon_code"),
-            "coupon_value": coupon.get("final_value")
+            "coupon_value": coupon.get("final_value"),
+            "invoice_id": invoice.get("id"),
+            "subscription_id": subscription.get("id"),
+            "subscription_cycle": invoice_cycle,
+            "upsert_time": datetime.now(timezone.utc)
         }
 
     @staticmethod
@@ -468,6 +493,8 @@ class api:
         )
 
         df = pd.DataFrame(rows)
+        df["subscription_cycle"] = (pd.to_numeric(df["subscription_cycle"], errors="coerce").astype("Int64"))
+
         return df
     
     @staticmethod
@@ -565,5 +592,26 @@ class api:
 
         df = pd.DataFrame(rows)
         return df
+    
+    @staticmethod
+    def getInvoiceCycle(session, headers, subscription_id, invoice_id):
+        if not subscription_id or not invoice_id:
+            return None
+
+        url = f"https://digitalmanager.guru/api/v2/subscriptions/{subscription_id}/invoices/{invoice_id}"
+
+        payload = api.RetryRequest(
+            session=session,
+            url=url,
+            headers=headers
+        )
+
+        cycle = payload.get("cycle")
+
+        try:
+            return int(float(cycle))
+        except (TypeError, ValueError):
+            return None
+
 
 

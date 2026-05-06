@@ -6,7 +6,7 @@ import traceback
 import pandas as pd
 import math
 
-dataI = (datetime.date.today() - datetime.timedelta(days=30)).strftime("%Y-%m-%d")
+dataI = datetime.date.today().strftime("%Y-%m-%d")
 dataF = datetime.date.today().strftime("%Y-%m-%d")
 
 banco = "Guru_DB"
@@ -98,7 +98,7 @@ print("Dados de vendas da Guru atualizados com sucesso!")
 try:
     print(f"Buscando dados de vendas da Principia para o período de {dataI} a {dataF}...")
 
-    df = metodosPrincipia.api.getSalesDF(periodo=[dataI, dataF], ambiente="url_prod")
+    df = metodosPrincipia.api.getSalesDF(periodo=[dataI, dataF], ambiente="prod")
 
     if df.empty:
         print("Aviso: nenhum dado retornado.")
