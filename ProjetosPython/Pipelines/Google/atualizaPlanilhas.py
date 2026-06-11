@@ -240,7 +240,7 @@ for planilha in planilhas_visitas:
         service,
         planilha,
         banco,
-        tabela_nps,
+        tabela_consultores,
         mapa
     )
 
