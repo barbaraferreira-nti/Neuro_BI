@@ -223,3 +223,73 @@ else:
     print("Nenhum anúncio válido para upsert.")
     
 print("Anúncios da Sinahpse atualizados com sucesso!")
+
+## Atualiza dim IG accounts
+
+ig_accounts_neurosaber = {
+    "@faculdadeneurosaber": "17841447825761704",
+    "@lubritesoficial": "17841401590092952",
+    "@neuroescolaoficial": "17841473063465957"
+}
+
+ig_accounts_sinahpse = {
+    "@entendendoautismo": "17841403967093719",
+    "@neurosaberoficial": "17841403637747125"
+}
+
+for nome, ig_account_id in ig_accounts_neurosaber.items():
+    try:
+        dados_meta = metodos_meta.api.getIGAccounts(
+            ambiente="neurosaber",
+            ig_account=ig_account_id
+        )
+
+        if dados_meta is None or dados_meta.empty:
+            print(f"Conta {nome} sem dados.")
+            continue
+        
+
+        rows = dados_meta.to_dict("records")
+
+        upsert = metodos_supabase.api.upsert_data(
+            banco="Meta_DB",
+            tabela="dm_ig_accounts",
+            dados=rows,
+            chave="id_account"
+        )
+
+        print(f"Conta {nome} atualizada com sucesso.")
+
+    except Exception as e:
+        print(f"Erro ao atualizar os dados da conta {nome} na tabela 'dm_ig_accounts'.")
+        print(str(e))
+        continue
+
+for nome, ig_account_id in ig_accounts_sinahpse.items():
+    try:
+        dados_meta = metodos_meta.api.getIGAccounts(
+            ambiente="sinahpse",
+            ig_account=ig_account_id
+        )
+
+        if dados_meta is None or dados_meta.empty:
+            print(f"Conta {nome} sem dados.")
+            continue
+        
+
+        rows = dados_meta.to_dict("records")
+
+        upsert = metodos_supabase.api.upsert_data(
+            banco="Meta_DB",
+            tabela="dm_ig_accounts",
+            dados=rows,
+            chave="id_account"
+        )
+
+        print(f"Conta {nome} atualizada com sucesso.")
+
+    except Exception as e:
+        print(f"Erro ao atualizar os dados da conta {nome} na tabela 'dm_ig_accounts'.")
+        print(str(e))
+        continue
+

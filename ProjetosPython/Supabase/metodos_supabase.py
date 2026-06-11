@@ -19,6 +19,18 @@ class api:
             "Formularios_Neuroescola":{
                 "url": Config.Supabase.URL_FORMULARIOS_NEUROESCOLA,
                 "key": Config.Supabase.TOKEN_FORMULARIOS_NEUROESCOLA
+            },
+            "ClickUp_DB":{
+                "url": Config.Supabase.URL_CLICKUP_DB,
+                "key": Config.Supabase.TOKEN_CLICKUP_DB
+            },
+            "Clint_DB": {
+                "url": Config.Supabase.URL_CLINT_DB,
+                "key": Config.Supabase.TOKEN_CLINT_DB
+            },
+            "Meta_DB":{
+                "url": Config.Supabase.URL_META_DB,
+                "key": Config.Supabase.TOKEN_META_DB               
             }
         }
 
@@ -30,8 +42,11 @@ class api:
         url = config["url"]
         key = config["key"]
 
-        if not url or not key:
-            raise ValueError(f"Configuração inválida para o banco: {banco}")
+        if not url:
+            raise ValueError(f"URL não configurada para o banco: {banco}")
+
+        if not key:
+            raise ValueError(f"TOKEN não configurado para o banco: {banco}")
 
         return create_client(url, key)
     

@@ -1,11 +1,14 @@
 {
-    "POS_MANEJO_0426": {
-    "id_lancamento": 3,
-    "nome_lancamento": "POS_MANEJO_0426",
-    "inicio_lancamento": "2026-04-29",
-    "fim_lancamento": "2026-05-09",
-    "id_produtos_lancamento": ["a160ed82-455b-4339-b9ef-a26e6e91db50"],
-    "id_offer_lancamento": ["a1a77f43-f944-4e23-86a1-8498fdf3f37b", "a1aae301-ab52-4918-b215-58f7e29aa811"],
+    "POS_MATEMATICA_0626": {
+    "id_lancamento": 6,
+    "nome_lancamento": "POS_MATEMATICA_0626",
+    "inicio_lancamento": "2026-06-04",
+    "fim_lancamento": "2026-06-26",
+    "id_produtos_lancamento": ["a1e54c14-3d34-4b0f-b05a-8501d883856d"],
+    "id_offer_lancamento": ["a1e5513f-f087-4f0c-92d8-c18f7fe5eedd", "a1edc774-a0c0-4662-a4f1-2a7fbba62f84", "a1edc853-a206-45d7-b92a-b65bea4de5bb", "a1edc7f9-3268-4bed-99fd-847b26d6dd3b", 
+    "a1ebd6ff-c7ec-47c8-bdd4-d32b1cba5953", "a1ebd832-50a1-4e7c-8c2d-16046d53515b", "a1ebd8b9-1577-4d01-9b1c-cdf759f9dcf6", "a1ebd7b6-872c-42f8-8db2-6035bfbdad0b", "a1ebc89b-90ed-4253-8e20-d21a55610e75", 
+    "a1ede3c6-983a-45f2-b012-9987cb0677b4", "a1ebd95d-48e2-47ad-ba47-929ed2600ecb", "a1ebda3d-4647-4ef1-b4e3-f781e9cadebf", "a1ebdba7-39c6-43ee-b0da-4ecccacb33f7", "a1ebd9d4-0143-42ae-8bd3-4a4be60647a1", 
+    "a1ede40d-3ec9-4581-b9f5-fd5fbca5ac2c", "a1ede31c-3491-4317-8f11-6d6a664e42d8", "a1eb3cc8-6457-4c66-af11-ba8dee6db292"],
     "id_produto_livro": ["9ca371c9-4561-4d33-b0d1-9234fc1d2c87"],
     "id_produto_guru_livro": ["1722257970"]
     }

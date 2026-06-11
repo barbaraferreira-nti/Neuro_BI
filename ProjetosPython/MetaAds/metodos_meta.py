@@ -5,6 +5,7 @@ from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 import random
 from config import Config
+import datetime
 
 class api:
     @staticmethod
@@ -28,7 +29,6 @@ class api:
         s.mount("http://", adapter)
         return s
     
-
     @staticmethod
     def RetryRequest(session, url, headers=None, params=None, retries=11, timeout=(10, 120)):
         """
@@ -113,8 +113,8 @@ class api:
             "fields": ",".join(camposList),
             "time_range": json.dumps({"since": dataInicio, "until": dataFim}), 
             "time_increment": 1,
-            "level": nivel,
-            #"action_breakdowns": "action_video_type"
+            "limit": 100,
+            "level": nivel
         }
 
         resultados = []
@@ -148,134 +148,472 @@ class api:
             df = df[colunas]  # seleciona apenas as colunas desejadas
 
         return df
-    
 
     @staticmethod
     def transformarDadosSupabase(rows):
+        ALLOWED = [
+            "account_id",
+            "campaign_id", 
+            "ad_id",
+            "impressions", "reach", "clicks", "spend", "frequency","date_start"
+        ]
 
-            ALLOWED = [
-                "account_id", "account_name",
-                "campaign_id", "campaign_name",
-                "ad_id", "ad_name",
-                "impressions", "reach", "clicks", "spend", "frequency","date_start"
-            ]
+        ACTIONS_MAP = {
+            "link_click": "link_click",
+            "page_engagement": "page_engagement",
+            "landing_page_view": "landing_page_view",
+            "post_engagement": "post_engagement",
+            "comment": "post_comment",
+            "post": "post_share",
+            "post_reaction": "post_reaction",
+            "onsite_conversion.post_save": "post_save",
+            "offsite_conversion.fb_pixel_add_to_cart": "add_to_cart",
+            "offsite_conversion.fb_pixel_purchase": "results",
+            "offsite_conversion.fb_pixel_initiate_checkout": "initiate_checkout",
+            "video_view": "video_view"
 
-            ACTIONS_MAP = {
-                "link_click": "link_click",
-                "page_engagement": "page_engagement",
-                "landing_page_view": "landing_page_view",
-                "post_engagement": "post_engagement",
-                "comment": "post_comment",
-                "post": "post_share",
-                "post_reaction": "post_reaction",
-                "onsite_conversion.post_save": "post_save",
-                "offsite_conversion.fb_pixel_add_to_cart": "add_to_cart",
-                "offsite_conversion.fb_pixel_purchase": "results",
+        }
 
-            }
+        ACTION_VALUES_MAP = {
+            "offsite_conversion.fb_pixel_purchase": "results_value",
+            "offsite_conversion.fb_pixel_add_to_cart": "add_to_cart_value"
+        }
 
-            ACTION_VALUES_MAP = {
-                "offsite_conversion.fb_pixel_add_payment_info": "results_value",
-                "offsite_conversion.fb_pixel_add_to_cart": "add_to_cart_value",
-            }
+        VIDEO_MAP = {
+            "video_play_actions": "video_p_total",
+            "video_avg_time_watched_actions": "video_avg_time_watched",
+            "video_p25_watched_actions": "video_p25_total",
+            "video_p50_watched_actions": "video_p50_total",
+            "video_p75_watched_actions": "video_p75_total",
+            "video_p100_watched_actions": "video_p100_total"
+        }
 
-            VIDEO_ACTION_MAP = {
-                "total": "video_p3s"
-            }
+        def to_int(x):
+            return int(float(x)) if x not in (None, "") else 0
 
-            VIDEO_PLAY_MAP = {
-                "total": "video_p_total"
-            }
+        def to_float(x):
+            return float(x) if x not in (None, "") else 0.0
+        
+        def extract_value(lista):
+            if not lista:
+                return 0
 
-            VIDEO_METRIC_COLS = [
-                "video_p25_total","video_p50_total","video_p75_total","video_p100_total"
-            ]
+            for item in lista:
+                if item.get("action_type") == "video_view":
+                    return to_int(item.get("value"))
 
-            def to_int(x):
-                return int(float(x)) if x not in (None, "") else 0
+            return 0
+        
+        out = []
 
-            def to_float(x):
-                return float(x) if x not in (None, "") else 0.0
+        for r in rows:
+            row = {k: r.get(k) for k in ALLOWED}
 
-            def extract_video_metric(items):
-                out = {
-                    "total": 0
-                }
+            row["impressions"] = to_int(row.get("impressions"))
+            row["reach"] = to_int(row.get("reach"))
+            row["clicks"] = to_int(row.get("clicks"))
+            row["spend"] = to_float(row.get("spend"))
+            row["frequency"] = to_float(row.get("frequency"))
 
-                for item in items or []:
-                    video_type = item.get("action_video_type")
-                    value = item.get("value")
+            # Inicializa colunas com zero
+            for col in ACTIONS_MAP.values():
+                row[col] = 0
 
-                    if video_type in out:
-                        out[video_type] = to_int(value)
+            for col in ACTION_VALUES_MAP.values():
+                row[col] = 0.0
+            
+            for col in VIDEO_MAP.values():
+                row[col] = 0
 
-                return out
+            # Actions
+            for action in r.get("actions", []):
+                action_type = action.get("action_type")
+                if action_type in ACTIONS_MAP:
+                    row[ACTIONS_MAP[action_type]] = to_int(action.get("value"))
+
+            # Action values
+            for action_value in r.get("action_values", []):
+                action_type = action_value.get("action_type")
+                if action_type in ACTION_VALUES_MAP:
+                    row[ACTION_VALUES_MAP[action_type]] = to_float(action_value.get("value"))
+
+            for origem, destino in VIDEO_MAP.items():
+                row[destino] = extract_value(r.get(origem))
+            
+            out.append(row)
+
+        return out
+    
+    @staticmethod
+    def enableTemplateInsights(ambiente, waba_id=None):
+        """
+        Habilita analytics de templates no WhatsApp Business Account
+        ATENÇÃO: irreversível
+        """
+
+
+        baseEndPoint = Config.Meta.URL_FACEBOOK
+        token = api.auth(ambiente=ambiente)
+
+        endPoint = f"{baseEndPoint}/{waba_id}"
+
+        params = {
+            "is_enabled_for_insights": True,
+            "access_token": token
+        }
+
+        response = requests.post(endPoint, data=params)
+        dados = response.json()
+
+        return dados
+    
+    @staticmethod
+    def getWhatsAppTemplateAnalytics(
+        ambiente=None,
+        waba_id=None,
+        template_ids=[],
+        start=None,
+        end=None,
+        granularity="daily",
+        metric_types=["sent", "delivered", "read", "clicked", "cost"]
+    ):
+
+        baseEndPoint = Config.Meta.URL_FACEBOOK
+        token = api.auth(ambiente=ambiente)
+
+        metrics = ",".join(metric_types)
+        templates = "[" + ",".join(map(str, template_ids)) + "]"
+
+        endPoint = f"{baseEndPoint}{waba_id}/template_analytics"
+
+        params = {
+            "start": start,
+            "end": end,
+            "granularity": granularity,
+            "metric_types": metrics,
+            "template_ids": templates,
+            "use_waba_timezone": "true",
+            "access_token": token
+        }
+
+        resultados = []
+
+        while endPoint:
+            response = requests.get(endPoint, params=params)
+            response.raise_for_status()
+            dados = response.json()
+
+            if "error" in dados:
+                raise Exception(dados["error"])
             
 
-            out = []
+            resultados.extend(dados.get("data", []))
+            endPoint = dados.get("paging", {}).get("next")
+            params = {}
 
-            for r in rows:
-                row = {k: r.get(k) for k in ALLOWED}
+        # Normalização
+        registros = []
 
-                row["impressions"] = to_int(row.get("impressions"))
-                row["reach"] = to_int(row.get("reach"))
-                row["clicks"] = to_int(row.get("clicks"))
-                row["spend"] = to_float(row.get("spend"))
-                row["frequency"] = to_float(row.get("frequency"))
+        for bloco in resultados:
+            for ponto in bloco.get("data_points", []):
+                registro = {
+                    "template_id": ponto.get("template_id"),
+                    "start": f"{start}T00:00:00-03:00",
+                    "end": f"{end}T23:59:59-03:00",
+                    "sent": ponto.get("sent"),
+                    "delivered": ponto.get("delivered"),
+                    "read": ponto.get("read"),
+                    "amount_spent": 0,
+                    "click_total": 0,
+                    "click_unique": 0,
+                    "click_reply_button": 0
+                }
 
-                # Inicializa colunas com zero
-                for col in ACTIONS_MAP.values():
-                    row[col] = 0
+                # Cliques
+                for c in ponto.get("clicked", []):
+                    tipo = c.get("type")
+                    count = c.get("count", 0)
 
-                for col in ACTION_VALUES_MAP.values():
-                    row[col] = 0.0
+                    if tipo == "quick_reply_button":
+                        registro["click_reply_button"] += count
+
+                    elif tipo == "unique_url_button":
+                        registro["click_unique"] += count
+
+                    elif tipo == "url_button":
+                        registro["click_total"] += count
                 
-                for col in VIDEO_ACTION_MAP.values():
-                    row[col] = 0
-                
-                for col in VIDEO_PLAY_MAP.values():
-                    row[col] = 0
-                
-                for col in VIDEO_METRIC_COLS:
-                    row[col] = 0
+                # Custo
+                for c in ponto.get("cost", []):
+                    if c.get("type") == "amount_spent":
+                        registro["amount_spent"] = c.get("value", 0)
+                        break
 
-                # Actions
-                for action in r.get("actions", []):
-                    action_type = action.get("action_type")
-                    if action_type in ACTIONS_MAP:
-                        row[ACTIONS_MAP[action_type]] = to_int(action.get("value"))
-                    if action_type == "video_view":
-                        video_type = action.get("action_video_type")
+                registros.append(registro)
+        df = pd.DataFrame(registros)
 
-                        if video_type in VIDEO_ACTION_MAP:
-                            row[VIDEO_ACTION_MAP[video_type]] = to_int(action.get("value"))
+        if not df.empty:
+            df["data"] = pd.to_datetime(df["start"]).dt.date
 
-                # Action values
-                for action_value in r.get("action_values", []):
-                    action_type = action_value.get("action_type")
-                    if action_type in ACTION_VALUES_MAP:
-                        row[ACTION_VALUES_MAP[action_type]] = to_float(action_value.get("value"))
+            df = (
+                df.groupby(["template_id", "data"], as_index=False)
+                .agg({
+                    "start": "min",
+                    "end": "max",
+                    "sent": "max",
+                    "delivered": "max",
+                    "read": "max",
+                    "amount_spent": "max",
+                    "click_total": "max",
+                    "click_unique": "max",
+                    "click_reply_button": "max"
+                })
+            )
 
-                # Video Play values
-                for video_value in r.get("video_play_actions", []):
-                    action_type = video_value.get("action_video_type")
-                    if action_type in VIDEO_PLAY_MAP:
-                        row[VIDEO_PLAY_MAP[action_type]] = to_int(video_value.get("value"))
-
-                
-                video_p25 = extract_video_metric(r.get("video_p25_watched_actions"))
-                row["video_p25_total"] = video_p25["total"]
-
-                video_p50 = extract_video_metric(r.get("video_p50_watched_actions"))
-                row["video_p50_total"] = video_p50["total"]
-
-                video_p75 = extract_video_metric(r.get("video_p75_watched_actions"))
-                row["video_p75_total"] = video_p75["total"]
-
-                video_p100 = extract_video_metric(r.get("video_p100_watched_actions"))
-                row["video_p100_total"] = video_p100["total"]
-
-                out.append(row)
-
-            return out
+        return df
     
+    @staticmethod
+    def getWhatsAppTemplatesCost(
+        ambiente=None,
+        waba_id=None,
+        start=None,
+        end=None,
+        phone_numbers=[],
+        dimensions=["phone","pricing_category", "pricing_type"],
+        granularity="daily",
+        metric_types=["cost", "volume"]):
+
+        baseEndPoint = Config.Meta.URL_FACEBOOK
+        token = api.auth(ambiente=ambiente)
+
+        endPoint = f"{baseEndPoint}{waba_id}/pricing_analytics"
+        metrics = ",".join(metric_types)
+        numbers = "[" + ",".join(map(str, phone_numbers)) + "]"
+        dimensions = ",".join(dimensions)
+        
+        params = {
+            "start": start,
+            "end": end,
+            "granularity": granularity,
+            "dimensions": dimensions,
+            "metric_types": metrics,
+            "phone_numbers": numbers,
+            "waba_id": waba_id,
+            "access_token": token
+        }
+
+        resultados = []
+        while endPoint:
+            response = requests.get(endPoint, params=params)
+            response.raise_for_status()
+            dados = response.json()
+
+            if "error" in dados:
+                raise Exception(dados["error"])
+            
+            
+            resultados.extend(dados.get("data", []))
+            endPoint = dados.get("paging", {}).get("next")
+            params = {}
+
+            # Normalização
+            registros = []
+
+            for bloco in resultados:
+                for ponto in bloco.get("data_points", []):
+                    base = {
+                        "template_id": ponto.get("template_id"),
+                        "start": pd.to_datetime(ponto.get("start"), unit="s"),
+                        "end": pd.to_datetime(ponto.get("end"), unit="s"),
+                        "phone": ponto.get("phone"),
+                        "pricing_type": ponto.get("pricing_type"),
+                        "pricing_category": ponto.get("pricing_category"),
+                        "volume": ponto.get("volume"),
+                        "cost": ponto.get("cost")
+    
+                    } 
+                    registros.append(base)
+            
+            df = pd.DataFrame(registros)
+            df["utm_source"] = "WhatsApp"
+
+            return df
+    
+    @staticmethod
+    def getWhatsAppTemplates(ambiente=None, waba_id=None, campos=[]):
+
+        baseEndPoint = Config.Meta.URL_FACEBOOK
+        token = api.auth(ambiente=ambiente)
+
+        endPoint = f"{baseEndPoint}{waba_id}/message_templates"
+
+        params = {
+            "fields":  ",".join(campos),
+            "access_token": token
+        }
+
+        resultados = []
+
+        while endPoint:
+            response = requests.get(endPoint, params=params)
+            response.raise_for_status()
+            dados = response.json()
+
+            if "error" in dados:
+                raise Exception(dados["error"])
+            
+            resultados.extend(dados.get("data", []))
+            endPoint = dados.get("paging", {}).get("next")
+            params = {}
+
+        df = pd.json_normalize(resultados)
+
+        return df
+    
+    @staticmethod
+    def getIGAccounts(ambiente=None, ig_account=None):
+        baseEndPoint = Config.Meta.URL_FACEBOOK
+        token = api.auth(ambiente=ambiente)
+        endPoint = f"{baseEndPoint}{ig_account}"
+        
+        metricas = ["id","name","username","profile_picture_url"]
+
+        params = {
+            "fields": ",".join(metricas),
+            "access_token": token
+        }
+
+        response = requests.get(endPoint, params=params)
+        response.raise_for_status()
+        dados = response.json()
+
+        if "error" in dados:
+            raise Exception(dados["error"])
+        
+        df = pd.json_normalize(dados)
+
+        df = df.rename(columns={
+            "id": "id_account",
+            "name": "account_name",
+            "username": "account_ig_name",
+            "profile_picture_url": "profile_picture_url"
+            })
+
+        return df
+
+    @staticmethod
+    def getIGAccountMidias(ambiente=None, ig_account=None, dataI=None, dataF=None):
+        baseEndPoint = Config.Meta.URL_FACEBOOK
+        token = api.auth(ambiente=ambiente)
+        endPoint = f"{baseEndPoint}{ig_account}/media"
+        
+        metricas = ["id","media_type", "media_url","permalink","thumbnail_url", "timestamp"]
+
+        params = {
+            "fields": ",".join(metricas),
+            "since": dataI,
+            "until": dataF,
+            "access_token": token
+        }
+        resultados = []
+
+        while endPoint:
+            response = requests.get(endPoint, params=params, timeout=30)
+            response.raise_for_status()
+
+            dados = response.json()
+
+            if "error" in dados:
+                raise Exception(dados["error"])
+
+            resultados.extend(dados.get("data", []))
+
+            endPoint = dados.get("paging", {}).get("next")
+            params = {}
+
+        df = pd.json_normalize(resultados)
+
+        df["id_account"] = ig_account
+
+        return df
+
+    @staticmethod
+    def getIGAccountInsights(ambiente=None, ig_account=None, dataI=None, dataF=None,breakdown=None, metric_type=None,metricas=[]):
+        baseEndPoint = Config.Meta.URL_FACEBOOK
+        token = api.auth(ambiente=ambiente)
+
+        endPoint = f"{baseEndPoint}{ig_account}/insights"
+
+        params = {
+            "metric": ",".join(metricas),
+            "period": "day",
+            "since": dataI,
+            "until": dataF,
+            "access_token": token
+        }
+
+        if metric_type:
+            params["metric_type"] = metric_type
+
+        if breakdown:
+            params["breakdown"] = breakdown
+
+        response = requests.get(endPoint, params=params, timeout=30)
+        response.raise_for_status()
+
+        dados = response.json()
+
+        if "error" in dados:
+            raise Exception(dados["error"])
+
+        df = pd.json_normalize(dados.get("data", []))
+
+        return df
+    
+    @staticmethod
+    def getIGMidiaInsights(ambiente=None, midia_id=None, dataI=None, dataF=None, metricas=[]):
+        baseEndPoint = Config.Meta.URL_FACEBOOK
+        token = api.auth(ambiente=ambiente)
+
+        endPoint = f"{baseEndPoint}{midia_id}/insights"
+
+        params = {
+            "metric": ",".join(metricas),
+            "period": "day",
+            "since": dataI,
+            "unitl": dataF,
+            "access_token": token
+        }
+        resultados = []
+
+        while endPoint:
+            response = requests.get(endPoint, params=params)
+            response.raise_for_status()
+
+            dados = response.json()
+
+            if "error" in dados:
+                raise Exception(dados["error"])
+            
+            resultados.extend(dados.get("data", []))
+            endPoint = dados.get("paging", {}).get("next")
+            params = {}
+
+        df = pd.json_normalize(resultados)
+        return df
+    
+    @staticmethod
+    def tratar_insights_conta(dados, id_account=None, data=None):
+        row = {
+            "id_account": id_account,
+            "data": data
+        }
+
+        for _, linha in dados.iterrows():
+            metrica = linha["name"]
+            valor = linha.get("total_value.value")
+
+            row[metrica] = valor
+
+        return pd.DataFrame([row])
+

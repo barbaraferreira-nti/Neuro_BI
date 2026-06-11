@@ -11,7 +11,7 @@ dic_contas_meta_sinahpse = {
     "TDAH na Escola": "2354015068250801",
     "LANÇAMENTOS": "386267435573477",
     "Perpetuos": "411919152706872"
-}
+    }
 
 dic_contas_meta_neurosaber = {
     "Venda Direta": "1669866780628047",
@@ -23,11 +23,9 @@ dic_contas_meta_neurosaber = {
     "NeuroSaber Geral": "346919473719117",
     "Corredor Polonês/Conteúdos": "2772430283027189",
     "Ecommerce": "1884841205352699",
-    "CA - Neurosaber (Terceiros)": "623426096445795",
-    
+    "CA - Neurosaber (Terceiros)": "623426096445795"
 }
-
-
+    
 dataI = (datetime.date.today() - datetime.timedelta(days=3)).strftime("%Y-%m-%d")
 dataF = datetime.date.today().strftime("%Y-%m-%d")
 
@@ -38,8 +36,9 @@ try:
 
         dados_meta = metodos_meta.api.getDadosConta(ambiente="neurosaber",
                                                     periodo=[dataI, dataF], 
-                                                    campos=["account_id", "account_name", "campaign_id", "campaign_name", "ad_id", "ad_name", "impressions", "reach", "clicks", "spend",
-                                                            "frequency", "actions", "action_values", "video_play_actions"], 
+                                                    campos=["account_id", "campaign_id", "ad_id", "impressions", "reach", "clicks", "spend", "actions", 
+                                                            "action_values", "video_play_actions", "video_avg_time_watched_actions", 
+                                                            "video_p25_watched_actions","video_p50_watched_actions", "video_p75_watched_actions", "video_p100_watched_actions"], 
                                                     nivel="ad", 
                                                     contaAnuncio=id
                                                     )
@@ -50,9 +49,9 @@ try:
         dados_supabase = metodos_meta.api.transformarDadosSupabase(dados_meta)
 
 
-        upsert = metodos_supabase.api.upsert_data(banco="Guru_DB", tabela="fact_meta", dados=dados_supabase, chave="account_id, campaign_id, ad_id, date_start")
+        upsert = metodos_supabase.api.upsert_data(banco="Meta_DB", tabela="fact_fb_account", dados=dados_supabase, chave="account_id, campaign_id, ad_id, date_start")
 except Exception as e:
-    print(f"Erro ao atualizar os dados da conta 'Neurosaber' na tabela 'fact_meta'.")
+    print(f"Erro ao atualizar os dados da conta '{nome}' na tabela 'fact_fb_account'.")
     print(str(e))
 
 
@@ -62,8 +61,9 @@ try:
 
         dados_meta = metodos_meta.api.getDadosConta(ambiente="sinahpse",
                                                     periodo=[dataI, dataF], 
-                                                    campos=["account_id", "account_name", "campaign_id", "campaign_name", "ad_id", "ad_name", "impressions", "reach", "clicks", "spend",
-                                                            "frequency", "actions", "action_values", "video_play_actions"], 
+                                                    campos=["account_id", "campaign_id", "ad_id", "impressions", "reach", "clicks", "spend", "actions", 
+                                                            "action_values", "video_play_actions", "video_avg_time_watched_actions", 
+                                                            "video_p25_watched_actions","video_p50_watched_actions", "video_p75_watched_actions", "video_p100_watched_actions"], 
                                                     nivel="ad", 
                                                     contaAnuncio=id
                                                     )
@@ -71,11 +71,12 @@ try:
             print(f"Conta {nome} sem dados.")
             continue
         
+
         dados_supabase = metodos_meta.api.transformarDadosSupabase(dados_meta)
 
 
-        upsert = metodos_supabase.api.upsert_data(banco="Guru_DB", tabela="fact_meta", dados=dados_supabase, chave="account_id, campaign_id, ad_id, date_start")
+        upsert = metodos_supabase.api.upsert_data(banco="Meta_DB", tabela="fact_fb_account", dados=dados_supabase, chave="account_id, campaign_id, ad_id, date_start")
 except Exception as e:
-    print(f"Erro ao atualizar os dados da conta 'Sinahpse' na tabela 'fact_meta'.")
+    print(f"Erro ao atualizar os dados da conta '{nome}' na tabela 'fact_fb_account'.")
     print(str(e))
 

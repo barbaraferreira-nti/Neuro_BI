@@ -302,7 +302,7 @@ class api:
         }
                        
     @staticmethod
-    def getOffers(per_page=50, max_pages=600):
+    def getOffers(per_page=50, max_pages=1000):
         baseEndPoint = Config.Guru.URL_PRODUCTS
         token = Config.Guru.TOKEN
         headers = {"Authorization": f"Bearer {token}"}
@@ -353,7 +353,9 @@ class api:
                         all_offers.append({
                             "offer_id": offer.get("id"),
                             "offer_name": offer.get("name"),
-                            "product_internal_id": product_id
+                            "product_internal_id": product_id,
+                            "created_at": api.unix_to_datetime(offer.get("created_at")),
+                            "updated_at": api.unix_to_datetime(offer.get("updated_at"))
                         })
 
                 cursor = payload.get("next_cursor")
@@ -377,6 +379,7 @@ class api:
         installments = payment.get("installments", {}) or {}
         invoice = payload.get("invoice", {}) or {}
         subscription = payload.get("subscription", {}) or {}
+        shipping = payload.get("shipping", {}) or {}
 
         offer = product.get("offer", {}) or {}
         coupon = payment.get("coupon", {}) or {}
@@ -438,6 +441,11 @@ class api:
             "invoice_id": invoice.get("id"),
             "subscription_id": subscription.get("id"),
             "subscription_cycle": invoice_cycle,
+            "shipping_name": shipping.get("name"),
+            "shipping_value": shipping.get("value"),
+            "marketplace_id_guru": payment.get("marketplace_id"),
+            "marketplace_name_guru": payment.get("marketplace_name"),
+            "marketplace_value_guru": payment.get("marketplace_value"),
             "upsert_time": datetime.now(timezone.utc)
         }
 
@@ -476,6 +484,7 @@ class api:
             "internal_id": payload.get("internal_id"),
             "name": payload.get("name"),
             "marketplace_name": payload.get("marketplace_name"),
+            "id_produto": payload.get("marketplace_id"),
             "product_group_id": group.get("id"),
             "product_group_name": group.get("name"),
             
@@ -612,6 +621,4 @@ class api:
             return int(float(cycle))
         except (TypeError, ValueError):
             return None
-
-
 

@@ -13,6 +13,7 @@ SCOPES = [
 tabela_onboarding = "formulario_onboarding"
 tabela_kickoff = "formulario_kickoff"
 tabela_nps = "formulario_nps_csat"
+tabela_consultores = "formulario_consultores"
 banco = "Formularios_Neuroescola"
 service = metodos_google.api.get_sheets_service(SCOPES)
 
@@ -76,7 +77,20 @@ MAPA_COLUNAS_NPS_FINAL = {
      "col_6": "q4",
      "col_7": "q5",
      "col_8": "q6",
-     "col_9": "q7"
+     "col_9": "q7",
+     "col_10": "municipio"
+}
+
+MAPA_COLUNAS_CSAT_VISITA = {
+     "col_1": "data",
+     "col_2": "municipio",
+     "col_3": "documento",
+     "col_4": "funcao",
+     "col_5": "q1",
+     "col_6": "q2",
+     "col_7": "q3",
+     "col_8": "q4",
+     "col_9": "q5"
 }
 
 def processar_planilha(service, config: Dict[str, str], banco, tabela, mapa) -> int:
@@ -212,3 +226,26 @@ for planilha in planilhas_nps:
     total_nps += qtd
 
 print(f"Total linhas inseridas na tabela {tabela_nps}: {total_nps}")
+
+
+## 04. CSAT Visita Tecnica
+planilhas_visitas = metodos_google.api.carregar_config_planilha_nps("planilha_neuroescola_consultores.json")
+total_visitas = 0
+
+for planilha in planilhas_visitas:
+    
+    mapa = MAPA_COLUNAS_CSAT_VISITA
+
+    qtd = processar_planilha_nps(
+        service,
+        planilha,
+        banco,
+        tabela_nps,
+        mapa
+    )
+
+    print(f"{planilha['nome_planilha']}: {qtd} linhas processadas")
+
+    total_visitas += qtd
+
+print(f"Total linhas inseridas na tabela {tabela_consultores}: {total_visitas}")

@@ -57,7 +57,7 @@ def normalizar_rows(rows):
 # Atualizando a dimensão 'product' 
 try: 
     print("Iniciando atualização da dimensão 'product' da Guru...")
-    df_product = metodos_guru.api.getProductsDF(app="GuruApi")
+    df_product = metodos_guru.api.getProductsDF()
     
     if df_product.empty:
         print("Aviso: nenhum dado retornado no endpoint de produtos.")
@@ -84,11 +84,11 @@ except Exception as e:
     print(traceback.format_exc())
 
 
-# Atualizando a dimensão 'contacts' 
+# # Atualizando a dimensão 'contacts' 
 
-try: 
+# try: 
     print("Iniciando atualização da dimensão 'contacts' da Guru...")
-    df_contact = metodos_guru.api.getContactsDF(app="GuruApi", periodo=[dataI,dataF])
+    df_contact = metodos_guru.api.getContactsDF(periodo=[dataI,dataF])
     
     if df_contact.empty:
         print("Aviso: nenhum dado retornado no endpoint de contatos.")
@@ -117,7 +117,7 @@ except Exception as e:
 # Atualizando a dimensão 'offers' 
 try: 
     print("Iniciando atualização da dimensão 'offers' da Guru...")
-    df_offers = metodos_guru.api.getOffersDF(app="GuruApi")
+    df_offers = metodos_guru.api.getOffersDF()
     
     if df_offers.empty:
         print("Aviso: nenhum dado retornado no endpoint de produtos/offers.")
@@ -146,7 +146,7 @@ except Exception as e:
 # Atualiza a 'dim_coupons'
 try: 
     print("Iniciando atualização da dimensão 'coupons' da Guru...")
-    df_coupons = metodos_guru.api.getCouponsDF(app="GuruApi")
+    df_coupons = metodos_guru.api.getCouponsDF()
     
     if df_coupons.empty:
         print("Aviso: nenhum dado retornado no endpoint de coupons.")
@@ -179,7 +179,7 @@ except Exception as e:
 # Atualizar a tabela 'dim_product'
 try:
     print("Iniciando atualização da dimensão 'product' da Principia...")
-    df = metodosPrincipia.api.getCoursesDF(app="PrincipiaApi", ambiente="url_prod")
+    df = metodosPrincipia.api.getCoursesDF(ambiente="url_prod")
 
     if df.empty:
         print("Aviso: nenhum dado retornado.")
@@ -209,8 +209,7 @@ except Exception as e:
     print(traceback.format_exc())
 
 
-# Atualizar a tabela 'dim_offer'
-
+### Atualizar a tabela 'dim_offer'
 offers_principia = {
         "p0001": {
             "offer_name": "[LANCAMENTO][PROLEIA][PRINCIPIA]",

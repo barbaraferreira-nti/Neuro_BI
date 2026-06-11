@@ -76,7 +76,7 @@ class api:
         while True:
             params = {
                 "page": pagina,
-                "limit": limite
+                "itemsPerPage": limite
             }
 
             response = api.requisicao(
@@ -110,7 +110,7 @@ class api:
                 endpoint="courses",
                 params={
                     "page": pagina,
-                    "limit": limite
+                    "itemsPerPage": limite
                 }
             )
 
@@ -293,6 +293,7 @@ class api:
         "product_id": payload.get("id"),
         "name": api.padronizar_nome_curso(nome),
         "marketplace_name": payload.get("ProductType"),
+        "id_produto": payload.get("id"),
         "created_at": api.unix_to_datetime(payload.get("createdAt")),
         "updated_at": api.unix_to_datetime(payload.get("updatedAt")),
         "is_hidden": api.tratarActive(payload.get("active")),
@@ -311,7 +312,6 @@ class api:
         df = pd.DataFrame(rows_tratadas)
         return df
         
-
     @staticmethod
     def getCoursesDF(ambiente=None):
         rows = api.getCourses(ambiente=ambiente)
