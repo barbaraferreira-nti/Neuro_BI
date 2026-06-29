@@ -1,6 +1,7 @@
 import requests, pprint, time, os, json
 import pandas as pd
 from config import Config
+from ETL import metodos_etl
 
 class api:
     @staticmethod
@@ -72,12 +73,6 @@ class api:
         return all_tasks
 
     @staticmethod
-    def ms_to_datetime(value):
-        if not value:
-            return None
-        return pd.to_datetime(int(value), unit="ms", utc=True).isoformat()
-    
-    @staticmethod
     def tratar_tasks(tasks):
         rows_tasks = []
 
@@ -107,12 +102,12 @@ class api:
                 "parent": task.get("parent"),
                 "top_level_parent": task.get("top_level_parent"),
                 "url": task.get("url"),
-                "date_created": api.ms_to_datetime(task.get("date_created")),
-                "date_updated": api.ms_to_datetime(task.get("date_updated")),
-                "date_closed": api.ms_to_datetime(task.get("date_closed")),
-                "date_done": api.ms_to_datetime(task.get("date_done")),
-                "due_date": api.ms_to_datetime(task.get("due_date")),
-                "start_date": api.ms_to_datetime(task.get("start_date"))
+                "date_created": metodos_etl.Etl.ms_to_datetime(task.get("date_created")),
+                "date_updated": metodos_etl.Etl.ms_to_datetime(task.get("date_updated")),
+                "date_closed": metodos_etl.Etl.ms_to_datetime(task.get("date_closed")),
+                "date_done": metodos_etl.Etl.ms_to_datetime(task.get("date_done")),
+                "due_date": metodos_etl.Etl.ms_to_datetime(task.get("due_date")),
+                "start_date": metodos_etl.Etl.ms_to_datetime(task.get("start_date"))
                 })
 
         return pd.DataFrame(rows_tasks)
@@ -328,7 +323,7 @@ class api:
             "comment_id": comment.get("id"),
             "comment_text": comment_text,
             "user_id": user.get("id"),
-            "date_created": api.ms_to_datetime(comment.get("date")),
+            "date_created": metodos_etl.Etl.ms_to_datetime(comment.get("date")),
             "reply_count": comment.get("reply_count"),
             "task_id": task_id
             })
@@ -352,7 +347,7 @@ class api:
                 "reply_text": reply_text,
                 "user_id": user.get("id"),
                 "resolved": reply.get("resolved"),
-                "date_created": api.ms_to_datetime(reply.get("date")),
+                "date_created": metodos_etl.Etl.ms_to_datetime(reply.get("date")),
                 "reply_count": reply.get("reply_count")
             })
 
@@ -375,7 +370,7 @@ class api:
                 "list_id": list_id,
                 "field_name": field.get("name"),
                 "type": field.get("type"),
-                "date_created": api.ms_to_datetime(field.get("date_created")),
+                "date_created": metodos_etl.Etl.ms_to_datetime(field.get("date_created")),
                 "hide_from_guests": field.get("hide_from_guests"),
                 "required": field.get("required")
             })
@@ -416,7 +411,7 @@ class api:
             field_value_date = None
 
             if field_type == "date" and value:
-                field_value_date = api.ms_to_datetime(value)
+                field_value_date = metodos_etl.Etl.ms_to_datetime(value)
 
             rows.append({
                 "task_id": task_id,
@@ -457,7 +452,7 @@ class api:
                 "source": attachment.get("source"),
                 "version": attachment.get("version"),
 
-                "date_created": api.ms_to_datetime(attachment.get("date")),
+                "date_created": metodos_etl.Etl.ms_to_datetime(attachment.get("date")),
 
                 "size_bytes": attachment.get("size"),
                 "total_comments": attachment.get("total_comments"),

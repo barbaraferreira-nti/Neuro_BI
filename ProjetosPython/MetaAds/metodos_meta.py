@@ -6,6 +6,9 @@ from urllib3.util.retry import Retry
 import random
 from config import Config
 import datetime
+from pathlib import Path
+
+ARQUIVO_CONTAS = str(Path(__file__).parent / "meta_contas.json")
 
 class api:
     @staticmethod
@@ -617,3 +620,15 @@ class api:
 
         return pd.DataFrame([row])
 
+    @staticmethod
+    def getContasMeta(empresa=None, tipo=None):
+        with open(ARQUIVO_CONTAS, encoding="utf-8") as f:
+            contas = json.load(f)
+
+        if empresa and tipo:
+            return contas[empresa][tipo]
+
+        if empresa:
+            return contas[empresa]
+
+        return contas

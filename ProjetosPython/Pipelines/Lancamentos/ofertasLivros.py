@@ -1,4 +1,5 @@
 from Supabase import metodos_supabase
+from ETL import metodos_etl
 import psycopg2
 import os, json
 from copy import deepcopy
@@ -41,74 +42,6 @@ def espelhar_venda(venda, novo_product_id, novo_product_id_guru):
             nova_venda[chave] = None
 
     return nova_venda
-
-def normalizar_json(df):
-    def tratar_valor(x):
-        if x is None:
-            return None
-
-        try:
-            if pd.isna(x):
-                return None
-        except Exception:
-            pass
-
-        if isinstance(x, pd.Timestamp):
-            return x.isoformat()
-
-        if isinstance(x, (datetime, date)):
-            return x.isoformat()
-
-        if isinstance(x, Decimal):
-            return float(x)
-
-        if isinstance(x, str):
-            return x.replace("\x00", "")
-
-        return x
-
-    return df.astype(object).apply(lambda col: col.map(tratar_valor))
-
-def limpar_nan_para_json(obj):
-    if obj is None:
-        return None
-
-    if isinstance(obj, float) and np.isnan(obj):
-        return None
-
-    if isinstance(obj, (np.floating,)):
-        if np.isnan(obj):
-            return None
-        return float(obj)
-
-    if isinstance(obj, (np.integer,)):
-        return int(obj)
-
-    if isinstance(obj, pd.Timestamp):
-        return obj.isoformat()
-
-    if isinstance(obj, (datetime, date)):
-        return obj.isoformat()
-
-    if isinstance(obj, Decimal):
-        return float(obj)
-
-    if isinstance(obj, str):
-        return obj.replace("\x00", "")
-
-    if isinstance(obj, dict):
-        return {k: limpar_nan_para_json(v) for k, v in obj.items()}
-
-    if isinstance(obj, list):
-        return [limpar_nan_para_json(v) for v in obj]
-
-    try:
-        if pd.isna(obj):
-            return None
-    except Exception:
-        pass
-
-    return obj
 
 # Lista dos lançamentos que deseja atualizar
 nomes_arquivos = ["POS_MATEMATICA_0626"]
@@ -171,7 +104,7 @@ for nomeArquivo in nomes_arquivos:
                 id_produto_guru_livro
             )
 
-            venda_espelhada = limpar_nan_para_json(venda_espelhada)
+            venda_espelhada = metodos_etl.Etl.limpar_nan_para_json(venda_espelhada)
 
             vendas_espelhadas.append(venda_espelhada)
 

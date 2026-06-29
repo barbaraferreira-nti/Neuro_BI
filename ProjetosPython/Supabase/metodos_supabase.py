@@ -31,6 +31,10 @@ class api:
             "Meta_DB":{
                 "url": Config.Supabase.URL_META_DB,
                 "key": Config.Supabase.TOKEN_META_DB               
+            },
+            "Jacad_DB": {
+                "url": Config.Supabase.URL_JACAD_DB,
+                "key": Config.Supabase.TOKEN_JACAD_DB                    
             }
         }
 

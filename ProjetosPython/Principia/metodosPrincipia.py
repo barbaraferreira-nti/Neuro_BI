@@ -2,6 +2,7 @@ import os, json, requests, re
 import pandas as pd
 from datetime import datetime, timezone
 from config import Config
+from ETL import metodos_etl
 
 
 class api:
@@ -138,9 +139,9 @@ class api:
                         "product_course_class_name": classe.get("name"),
                         "product_course_class_active": classe.get("active"),
                         "product_course_class_visible": classe.get("visible"),
-                        "product_course_class_price": api.tratar_value(classe.get("priceInCents")),
-                        "product_course_class_created_at": api.unix_to_datetime(classe.get("createdAt")),
-                        "product_course_class_updated_at": api.unix_to_datetime(classe.get("updatedAt"))
+                        "product_course_class_price": metodos_etl.Etl.tratar_value(classe.get("priceInCents")),
+                        "product_course_class_created_at": metodos_etl.Etl.unix_to_datetime(classe.get("createdAt")),
+                        "product_course_class_updated_at": metodos_etl.Etl.unix_to_datetime(classe.get("updatedAt"))
                     })
 
             paging = payload.get("paging", {})
@@ -152,63 +153,6 @@ class api:
             pagina = next_page
 
         return todas_classes
-
-    @staticmethod
-    def tratar_telefone(value):
-        if not value:
-            return None
-
-        value = re.sub(r"\D", "", str(value))
-
-        # DDD + telefone fixo
-        if len(value) == 10:
-            value = "55" + value
-
-        # DDD + celular
-        elif len(value) == 11:
-            value = "55" + value
-
-        # 55 + DDD + telefone fixo
-        elif len(value) == 12:
-            value = value[:4] + "9" + value[4:]
-
-        return value
-    
-    @staticmethod
-    def tratar_value(value):
-        if value is None:
-            return None
-        
-        return round(float(value) / 100, 2)
-    
-    @staticmethod
-    def tratar_value2(value):
-        if value is None:
-            return None
-        
-        return round(float(value) / 10, 2)
-    
-    @staticmethod
-    def unix_to_datetime(value):
-        if value is None:
-            return None
-
-        if isinstance(value, str):
-            value = value.strip()
-            if value == "":
-                return None
-            try:
-                value = float(value)
-            except ValueError:
-                return value
-
-        if not isinstance(value, (int, float)):
-            return None
-
-        if value > 1e12:
-            value = value / 1000
-
-        return datetime.fromtimestamp(value, tz=timezone.utc).isoformat()
 
     @staticmethod
     def padronizar_nome_curso(nome):
@@ -252,15 +196,15 @@ class api:
         "confirmed_at": payload.get("signedDate"),
         "product_id": product_id,
         "offer_id": regras.get("offer_id"),
-        "payment_gross": api.tratar_value2(payload.get("upfrontValue")),
-        "payment_net": api.tratar_value(payload.get("totalValue")),
+        "payment_gross": metodos_etl.Etl.tratar_value2(payload.get("upfrontValue")),
+        "payment_net": metodos_etl.Etl.tratar_value(payload.get("totalValue")),
         "payment_method": "Boleto Parcelado",
         "installments_qty": payload.get("installmentsToApply"),
-        "product_total_value": api.tratar_value(course.get("price")),
+        "product_total_value": metodos_etl.Etl.tratar_value(course.get("price")),
         "contact_doc": payload.get("CPF"),
         "contact_name": payload.get("fullName"),
         "contact_email": payload.get("email"),
-        "contact_phone": api.tratar_telefone(payload.get("phone")),
+        "contact_phone": metodos_etl.Etl.tratar_telefone(payload.get("phone")),
         "contact_address_zipcode": address.get("zipcode"),
         "contact_address_state": address.get("state"),
         "contact_address_city": address.get("city"),
@@ -294,8 +238,8 @@ class api:
         "name": api.padronizar_nome_curso(nome),
         "marketplace_name": payload.get("ProductType"),
         "id_produto": payload.get("id"),
-        "created_at": api.unix_to_datetime(payload.get("createdAt")),
-        "updated_at": api.unix_to_datetime(payload.get("updatedAt")),
+        "created_at": metodos_etl.Etl.unix_to_datetime(payload.get("createdAt")),
+        "updated_at": metodos_etl.Etl.unix_to_datetime(payload.get("updatedAt")),
         "is_hidden": api.tratarActive(payload.get("active")),
         "plataforma": "Principia"
         }

@@ -1,4 +1,3 @@
-
 from typing import List, Dict, Any
 from Supabase import metodos_supabase
 from Google import metodos_google

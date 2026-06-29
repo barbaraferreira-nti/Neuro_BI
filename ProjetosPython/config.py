@@ -10,6 +10,7 @@ class Config:
         URL_CONTACTS = os.getenv("GURU_API_URL_CONTACTS")
         URL_PRODUCTS = os.getenv("GURU_API_URL_PRODUCTS")
         URL_COUPONS = os.getenv("GURU_API_URL_COUPONS")
+        URL_TRACKINGS = os.getenv("GURU_API_URL_TRACKINGS")
 
     class ActiveCampaign:
         TOKEN = os.getenv("ACTIVE_CAMPAIGN_API_TOKEN")
@@ -36,12 +37,15 @@ class Config:
         TOKEN_CLICKUP_DB = os.getenv("SUPABASE_API_TOKEN_CLICKUP_DB")
         TOKEN_CLINT_DB = os.getenv("SUPABASE_API_TOKEN_CLINT_DB")
         TOKEN_META_DB = os.getenv("SUPABASE_API_TOKEN_META_DB")
+        TOKEN_JACAD_DB = os.getenv("SUPABASE_API_TOKEN_JACAD_DB")
+
         URL_GURU_DB = os.getenv("SUPABASE_API_URL_GURU_DB")
         URL_OCTADESK_DB = os.getenv("SUPABASE_API_URL_OCTADESK_DB")
         URL_FORMULARIOS_NEUROESCOLA = os.getenv("SUPABASE_API_URL_FORMULARIOS_NEUROESCOLA")
         URL_CLICKUP_DB = os.getenv("SUPABASE_API_URL_CLICKUP_DB")
         URL_CLINT_DB = os.getenv("SUPABASE_API_URL_CLINT_DB")
         URL_META_DB = os.getenv("SUPABASE_API_URL_META_DB")
+        URL_JACAD_DB = os.getenv("SUPABASE_API_URL_JACAD_DB")
 
     class VTurb:
         TOKEN = os.getenv("VTURB_API_TOKEN")
@@ -66,3 +70,7 @@ class Config:
 
     class Autentique:
         TOKEN = os.getenv("AUTENTIQUE_API_TOKEN")
+    
+    class Jacad:
+        TOKEN = os.getenv("JACAD_API_TOKEN")
+        URL = os.getenv("JACAD_API_URL")
