@@ -3,17 +3,8 @@ import pandas as pd
 from Supabase import metodos_supabase
 import datetime
 
-
-ig_accounts_neurosaber = {
-    "@faculdadeneurosaber": "17841447825761704",
-    "@lubritesoficial": "17841401590092952",
-    "@neuroescolaoficial": "17841473063465957"
-}
-
-ig_accounts_sinahpse = {
-    "@entendendoautismo": "17841403967093719",
-    "@neurosaberoficial": "17841403637747125"
-}
+contas_ig_neurosaber = metodos_meta.api.getContasMeta("Neurosaber", "ContasInstagram")
+contas_ig_sinahpse = metodos_meta.api.getContasMeta("Sinahpse", "ContasInstagram")
 
 def gerar_dias(data_inicio, data_fim):
     atual = datetime.datetime.strptime(data_inicio, "%Y-%m-%d").date()
@@ -47,7 +38,7 @@ dataF = "2026-05-10"
 
 ## Atualizar dados contas IG
 resultados = []
-for nome, ig_account_id in ig_accounts_neurosaber.items():
+for nome, ig_account_id in contas_ig_neurosaber.items():
     for data in gerar_dias(dataI, dataF):
         try:
             dados_meta = metodos_meta.api.getIGAccountInsights(

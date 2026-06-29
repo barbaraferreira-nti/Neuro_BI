@@ -1,4 +1,5 @@
 from config import Config
+from ETL import metodos_etl
 import requests
 import time
 import json, re
@@ -173,14 +174,6 @@ class api:
         return pd.DataFrame(rows)
     
     @staticmethod
-    def limpar_caracteres(cpf):
-        if not cpf:
-            return None
-
-        # remove tudo que não for número
-        cpf = re.sub(r"\D", "", str(cpf))
-
-    @staticmethod
     def tratar_contacts(contacts):
         rows_contacts = []
         rows_tags = []
@@ -203,23 +196,23 @@ class api:
                 "contact_id": contact_id,
                 "created_at": contact.get("created_at"),
                 "updated_at": contact.get("updated_at"),
-                "contact_name": api.normalizar_none(contact.get("name")),
-                "contact_email": api.normalizar_none(contact.get("email")),
-                "contact_phone": api.limpar_caracteres(contact.get("fullPhone")),
-                "doc": api.normalizar_none(fields.get("doc")),
-                "produto": api.normalizar_none(fields.get("produto")),
-                "assinado_data": api.normalizar_none(fields.get("assinado_data")),
-                "assinatura_status": api.normalizar_none(fields.get("assinatura_status")),
-                "assinatura_visualizada": api.normalizar_none(fields.get("assinatura_visualiza")),
-                "motivo_para_assinatura": api.normalizar_none(fields.get("motivo_para_assinatu")),
-                "address_street": api.normalizar_none(address.get("street")),
-                "address_number": api.normalizar_none(address.get("number")),
-                "address_complement": api.normalizar_none(address.get("comp")),
-                "address_district": api.normalizar_none(address.get("district")),
-                "address_city": api.normalizar_none(address.get("city")),
-                "address_state": api.normalizar_none(address.get("state")),
-                "address_country": api.normalizar_none(address.get("country")),
-                "address_zip_code": api.limpar_caracteres(address.get("zipcode"))
+                "contact_name": metodos_etl.Etl.normalizar_none(contact.get("name")),
+                "contact_email": metodos_etl.Etl.normalizar_none(contact.get("email")),
+                "contact_phone": metodos_etl.Etl.tratar_telefone(contact.get("fullPhone")),
+                "doc": metodos_etl.Etl.normalizar_none(fields.get("doc")),
+                "produto": metodos_etl.Etl.normalizar_none(fields.get("produto")),
+                "assinado_data": metodos_etl.Etl.normalizar_none(fields.get("assinado_data")),
+                "assinatura_status": metodos_etl.Etl.normalizar_none(fields.get("assinatura_status")),
+                "assinatura_visualizada": metodos_etl.Etl.normalizar_none(fields.get("assinatura_visualiza")),
+                "motivo_para_assinatura": metodos_etl.Etl.normalizar_none(fields.get("motivo_para_assinatu")),
+                "address_street": metodos_etl.Etl.normalizar_none(address.get("street")),
+                "address_number": metodos_etl.Etl.normalizar_none(address.get("number")),
+                "address_complement": metodos_etl.Etl.normalizar_none(address.get("comp")),
+                "address_district": metodos_etl.Etl.normalizar_none(address.get("district")),
+                "address_city": metodos_etl.Etl.normalizar_none(address.get("city")),
+                "address_state": metodos_etl.Etl.normalizar_none(address.get("state")),
+                "address_country": metodos_etl.Etl.normalizar_none(address.get("country")),
+                "address_zip_code": metodos_etl.Etl.tratar_telefone(address.get("zipcode"))
     
             })
 
@@ -335,28 +328,3 @@ class api:
 
         return df_deals
     
-    @staticmethod
-    def parse_json_dict(valor):
-        valor = api.normalizar_none(valor)
-
-        if valor is None:
-            return {}
-
-        if isinstance(valor, dict):
-            return valor
-
-        if isinstance(valor, str):
-            try:
-                convertido = json.loads(valor)
-                if isinstance(convertido, dict):
-                    return convertido
-            except Exception:
-                return {}
-
-        return {}
-    
-    @staticmethod
-    def normalizar_none(valor):
-        if valor in [None, "", "None", "null", "NULL"]:
-            return None
-        return valor

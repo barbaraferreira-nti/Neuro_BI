@@ -179,7 +179,7 @@ except Exception as e:
 # Atualizar a tabela 'dim_product'
 try:
     print("Iniciando atualização da dimensão 'product' da Principia...")
-    df = metodosPrincipia.api.getCoursesDF(ambiente="url_prod")
+    df = metodosPrincipia.api.getCoursesDF(ambiente="prod")
 
     if df.empty:
         print("Aviso: nenhum dado retornado.")
@@ -263,6 +263,7 @@ try:
         dados=rows_offer,
         chave="offer_id"
     )
+    print(f"Upsert concluído com sucesso. Registros atualizados: {len(rows_offer)}")
 except Exception as e:
     print(f"Erro ao fazer upsert na tabela {tabela_dim_offer}' no banco '{banco}'.")
     print(str(e))

@@ -4,6 +4,7 @@ import requests
 import pandas as pd
 import re
 from config import Config
+from ETL import metodos_etl
 
 class api:
     @staticmethod
@@ -59,35 +60,6 @@ class api:
                     time.sleep(sleep_time)
 
             raise Exception(f"Falha após {retries} tentativas. Último erro: {last_exc}")
-
-    @staticmethod
-    def unix_to_datetime(value):
-        if value in (None, "", 0):
-            return None
-        if value > 1e12:
-            value = value/1000
-        return datetime.fromtimestamp(value, tz=timezone.utc)
-
-    @staticmethod
-    def tratar_telefone(value):
-        if not value:
-            return None
-
-        value = re.sub(r"\D", "", str(value))
-
-        # DDD + telefone fixo
-        if len(value) == 10:
-            value = "55" + value
-
-        # DDD + celular
-        elif len(value) == 11:
-            value = "55" + value
-
-        # 55 + DDD + telefone fixo
-        elif len(value) == 12:
-            value = value[:4] + "9" + value[4:]
-
-        return value
 
     @staticmethod
     def getTransactions(periodo, per_page=50, max_pages=600):
@@ -336,7 +308,7 @@ class api:
                     if not product_id:
                         continue
 
-                    url_offers = f"https://digitalmanager.guru/api/v2/products/{product_id}/offers"
+                    url_offers = f"{baseEndPoint}{product_id}/offers"
 
                     payload_offers = api.RetryRequest(
                         session=session,
@@ -354,8 +326,9 @@ class api:
                             "offer_id": offer.get("id"),
                             "offer_name": offer.get("name"),
                             "product_internal_id": product_id,
-                            "created_at": api.unix_to_datetime(offer.get("created_at")),
-                            "updated_at": api.unix_to_datetime(offer.get("updated_at"))
+                            "created_at": metodos_etl.Etl.unix_to_datetime(offer.get("created_at")),
+                            "updated_at": metodos_etl.Etl.unix_to_datetime(offer.get("updated_at")),
+                            "checkout_url": offer.get("checkout_url")
                         })
 
                 cursor = payload.get("next_cursor")
@@ -383,17 +356,25 @@ class api:
 
         offer = product.get("offer", {}) or {}
         coupon = payment.get("coupon", {}) or {}
+        pptc_raw = trackings.get("pptc")
 
+        if isinstance(pptc_raw, dict):
+            pptc = pptc_raw
+        elif isinstance(pptc_raw, list) and pptc_raw:
+            pptc = pptc_raw[0]
+        else:
+            pptc = {}
+            
         return {
             "id": payload.get("id"),
             "status": payload.get("status"),
         
             # timestamptz no banco
-            "created_at": api.unix_to_datetime(dates.get("created_at")),
-            "updated_at": api.unix_to_datetime(dates.get("updated_at")),
-            "ordered_at": api.unix_to_datetime(dates.get("ordered_at")),
-            "confirmed_at": api.unix_to_datetime(dates.get("confirmed_at")),
-            "canceled_at": api.unix_to_datetime(dates.get("canceled_at")),
+            "created_at": metodos_etl.Etl.unix_to_datetime(dates.get("created_at")),
+            "updated_at": metodos_etl.Etl.unix_to_datetime(dates.get("updated_at")),
+            "ordered_at": metodos_etl.Etl.unix_to_datetime(dates.get("ordered_at")),
+            "confirmed_at": metodos_etl.Etl.unix_to_datetime(dates.get("confirmed_at")),
+            "canceled_at": metodos_etl.Etl.unix_to_datetime(dates.get("canceled_at")),
 
             "product_id": product.get("internal_id"),
             "product_guru_id": product.get("id"),
@@ -413,6 +394,7 @@ class api:
             "trackings_utm_medium": trackings.get("utm_medium"),
             "trackings_utm_content": trackings.get("utm_content"),
             "trackings_utm_term": trackings.get("utm_term"),
+            "checkout_id": pptc.get("checkout_id"),
 
             "has_order_bump": payload.get("has_order_bump"),
             "is_order_bump": payload.get("is_order_bump"),
@@ -424,7 +406,7 @@ class api:
             "contact_doc": contact.get("doc"),
             "contact_name": contact.get("name"),
             "contact_email": contact.get("email"),
-            "contact_phone": api.tratar_telefone(contact.get("phone_number")),
+            "contact_phone": metodos_etl.Etl.tratar_telefone(contact.get("phone_number")),
             "contact_guru_id": contact.get("id"),
             "contact_address_zipcode": contact.get("address_zip_code"),
             "contact_address_state": contact.get("address_state"),
@@ -446,6 +428,7 @@ class api:
             "marketplace_id_guru": payment.get("marketplace_id"),
             "marketplace_name_guru": payment.get("marketplace_name"),
             "marketplace_value_guru": payment.get("marketplace_value"),
+
             "upsert_time": datetime.now(timezone.utc)
         }
 
@@ -458,7 +441,7 @@ class api:
             "company_name": payload.get("company_name"),
             "email": payload.get("email"),
             "doc": payload.get("doc"),
-            "phone_number": api.tratar_telefone(payload.get("phone_number")),
+            "phone_number": metodos_etl.Etl.tratar_telefone(payload.get("phone_number")),
             "phone_local_code": payload.get("phone_local_code"),
             "address": payload.get("address"),
             "address_number": payload.get("address_number"),
@@ -471,8 +454,8 @@ class api:
             "address_zip_code": payload.get("address_zip_code"),
 
             # timestamptz no banco
-            "created_at": api.unix_to_datetime(payload.get("created_at")),
-            "updated_at": api.unix_to_datetime(payload.get("updated_at"))
+            "created_at": metodos_etl.Etl.unix_to_datetime(payload.get("created_at")),
+            "updated_at": metodos_etl.Etl.unix_to_datetime(payload.get("updated_at"))
     }
 
     @staticmethod    
@@ -489,8 +472,8 @@ class api:
             "product_group_name": group.get("name"),
             
             # timestamptz no banco
-            "created_at": api.unix_to_datetime(payload.get("created_at")),
-            "updated_at": api.unix_to_datetime(payload.get("updated_at")),
+            "created_at": metodos_etl.Etl.unix_to_datetime(payload.get("created_at")),
+            "updated_at": metodos_etl.Etl.unix_to_datetime(payload.get("updated_at")),
             "is_hidden": payload.get("is_hidden"),
             "plataforma": "Guru"
         }
@@ -585,8 +568,8 @@ class api:
             "name": payload.get("coupon_code"),
             
             # timestamptz no banco
-            "date_ini": api.unix_to_datetime(payload.get("date_ini")),
-            "date_end": api.unix_to_datetime(payload.get("date_end")),
+            "date_ini": metodos_etl.Etl.unix_to_datetime(payload.get("date_ini")),
+            "date_end": metodos_etl.Etl.unix_to_datetime(payload.get("date_end")),
 
             "incidence_field": payload.get("incidence_field"),
             "incidence_type": payload.get("incidence_type"),
@@ -622,3 +605,99 @@ class api:
         except (TypeError, ValueError):
             return None
 
+    @staticmethod
+    def getCheckouts(params=None, max_pages=None):
+        baseEndPoint = Config.Guru.URL_TRACKINGS
+        token = Config.Guru.TOKEN
+
+        headers = {"Authorization": f"Bearer {token}"}
+
+        page_count = 0
+        cursor = None
+        all_rows = []
+
+        with requests.Session() as session:
+            while True:
+                page_count += 1
+
+                request_params = {
+                    "is_active": 1
+                }
+
+                if params:
+                    request_params.update(params)
+
+                if cursor:
+                    request_params["cursor"] = cursor
+
+                payload = api.RetryRequest(
+                    session=session,
+                    url=f"{baseEndPoint}checkouts",
+                    headers=headers,
+                    params=request_params
+                )
+
+                pages = payload.get("data", []) or []
+
+                for page in pages:
+                    row_base = api.tratarCheckouts(page)
+
+                    checkout_id = page.get("id")
+
+                    if not checkout_id:
+                        all_rows.append(row_base)
+                        continue
+
+                    payload_clicks = api.RetryRequest(
+                        session=session,
+                        url=f"{baseEndPoint}{checkout_id}/daily-clicks",
+                        headers=headers
+                    )
+
+                    clicks = payload_clicks.get("data", []) or []
+
+                    if not clicks:
+                        row = row_base.copy()
+                        row["clicks"] = None
+                        row["checkout"] = None
+                        row["date"] = None
+                        all_rows.append(row)
+                        continue
+
+                    for checkout in clicks:
+                        row = row_base.copy()
+
+                        row["date"] = checkout.get("clicked_at")
+                        row["clicks"] = checkout.get("ttlClicks")
+                        row["checkout"] = checkout.get("ttlCheckout")
+
+                        all_rows.append(row)
+
+                cursor = payload.get("next_cursor")
+
+                if not cursor:
+                    break
+
+                if max_pages and page_count >= max_pages:
+                    print(f"⚠️ Limite de {max_pages} páginas atingido.")
+                    break
+
+        return all_rows
+
+    @staticmethod
+    def tratarCheckouts(payload):
+        group = payload.get("group") or {}
+        product = payload.get("product") or {}
+        return {
+            "checkout_id": payload.get("id"),
+            "name": payload.get("name"),
+            "group_id": group.get("id"),
+            "product_id": product.get("id"),
+            "public_url": payload.get("public_url"),
+            "url": payload.get("url"),
+            "is_active": payload.get("is_active"),
+            "plataforma": "Guru"
+        }
+    
+
+    

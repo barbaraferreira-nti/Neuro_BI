@@ -8,9 +8,14 @@ log_execucao.txt
 
 # configs sensíveis
 configGoogle.json
+meta_contas.json
+bancos.json
 
 # C extensions
 *.so
+
+# Arquivos bat
+*.bat
 
 # Distribution / packaging
 .Python

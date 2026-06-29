@@ -1,6 +1,7 @@
 from Principia import metodosPrincipia
 from Supabase import metodos_supabase
 from Guru import metodos_guru
+from ETL import metodos_etl
 from Shopify import metodos_shopify
 import datetime
 import traceback
@@ -10,52 +11,9 @@ import math
 dataI = datetime.date.today().strftime("%Y-%m-%d")
 dataF = datetime.date.today().strftime("%Y-%m-%d")
 
-
 banco = "Guru_DB"
 tabela = "fact_sales"
 batch_size = 1000
-
-def normalizar_json(valor):
-    # 1. nulos 
-    if pd.isna(valor):
-        return None
-    if isinstance(valor, float) and math.isnan(valor):
-        return None
-
-    if pd.isna(valor):
-        return None
-
-    # 2. datas 
-    if isinstance(valor, pd.Timestamp):
-        return valor.isoformat()
-
-    if isinstance(valor, (datetime.datetime, datetime.date)):
-        return valor.isoformat()
-
-    # 3. floats que são inteiros (ex: 6.0 → 6)
-    if isinstance(valor, float):
-        if valor.is_integer():
-            return int(valor)
-        return float(valor)
-
-    # 4. strings
-    if isinstance(valor, str):
-        valor = valor.replace("\x00", "")
-        valor = valor.replace("\u0000", "")
-        return valor.strip()
-    
-    return valor
-
-def normalizar_rows(rows):
-    rows_tratadas = []
-
-    for row in rows:
-        row_tratada = {}
-        for chave, valor in row.items():
-            row_tratada[chave] = normalizar_json(valor)
-        rows_tratadas.append(row_tratada)
-
-    return rows_tratadas
 
 ### 1. Atualizar as vendas da Guru
 
@@ -74,7 +32,7 @@ try:
             raise ValueError("Existem registros com id nulo.")
         
         rows = df.to_dict(orient="records")
-        rows = normalizar_rows(rows)
+        rows = metodos_etl.Etl.normalizar_rows(rows)
         total_rows = len(rows)
 
         print(f"Total de registros para upsert: {total_rows}")
@@ -111,7 +69,7 @@ try:
             raise ValueError("Existem registros com id nulo.")
         
         rows = df.to_dict(orient="records")
-        rows = normalizar_rows(rows)
+        rows = metodos_etl.Etl.normalizar_rows(rows)
         total_rows = len(rows)
         print(f"Total de registros para upsert: {total_rows}")
 

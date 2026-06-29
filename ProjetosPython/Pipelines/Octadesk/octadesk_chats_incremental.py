@@ -4,6 +4,7 @@ import requests
 import psycopg2
 from datetime import datetime, timedelta, timezone
 from config import Config
+from PostgreSQL import metodos_postgresql
 import os
 
 script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -79,18 +80,6 @@ def get_main_phone(chat_item):
                 return phone.get("number")
     return None
 
-
-def connect_db():
-    return psycopg2.connect(
-        host="aws-0-us-west-2.pooler.supabase.com",
-        database="postgres",
-        user="postgres.oucfnlmlzssddpifqifs",
-        password="Aveces16.1612",
-        port=5432,
-        sslmode="require"
-    )
-
-
 def reconnect_db(conn=None, cursor=None):
     try:
         if cursor:
@@ -105,7 +94,7 @@ def reconnect_db(conn=None, cursor=None):
         pass
 
     print("🔌 Reconectando ao Supabase...")
-    conn = connect_db()
+    conn = metodos_postgresql.PGSQL.conexao("Octadesk_DB")
     cursor = conn.cursor()
     return conn, cursor
 
@@ -191,7 +180,7 @@ def page_date_stats(items):
 start_time = time.time()
 print("▶️ Iniciando carga incremental Octadesk")
 
-conn = connect_db()
+conn = metodos_postgresql.PGSQL.conexao("Octadesk_DB")
 cursor = conn.cursor()
 
 cursor.execute("SELECT MAX(created_at) FROM octadesk_chats")
